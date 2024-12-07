@@ -41,11 +41,13 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col bg-background">
             <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
               <Navigation />
-              <main className="flex-1 h-[calc(100vh-3.5rem)]">
-                <div className="container flex-1">{children}</div>
+              <main className="flex-1 overflow-y-auto">
+                <div className="container mx-auto min-h-[calc(100vh-3.5rem)]">
+                  {children}
+                </div>
               </main>
               <footer className="border-t border-border/40 py-6 dark:border-border md:px-8 md:py-0">
-                <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+                <div className="text-xs text-neutral-500 dark:text-neutral-400 container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
                   &copy; {year} nehno.com
                 </div>
               </footer>

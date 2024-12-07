@@ -51,7 +51,7 @@ export default async function PostPage({
     options
   );
   const postImageUrl = post.mainImage
-    ? urlFor(post.mainImage)?.width(550).height(310).url()
+    ? urlFor(post.mainImage)?.width(800).height(451).url()
     : null;
 
   const authorImage = post?.author?.image;
@@ -61,7 +61,7 @@ export default async function PostPage({
   const authorName = post?.author?.name || "";
 
   return (
-    <div className="container mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-4">
+    <div className="container mx-auto min-h-screen max-w-4xl p-8 flex flex-col gap-4">
       <Link href="/" className="hover:underline">
         ← Back to home
       </Link>

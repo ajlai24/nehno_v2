@@ -8,34 +8,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { BlogCardImage } from "@/components/BlogCardImage";
+import { Post } from "@/sanity/sanity.types";
 
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`;
+]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt, mainImage }`;
 
 const options = { next: { revalidate: 30 } };
 
 export default async function Home() {
-  const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
+  const posts = await client.fetch<SanityDocument<Post>[]>(
+    POSTS_QUERY,
+    {},
+    options
+  );
 
   return (
-    <div className="p-4">
-      <ul className="flex flex-col gap-y-4">
+    <div className="container mx-auto p-8 max-w-4xl">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2  gap-4">
         {posts.map((post) => (
-          <Link href={`/${post.slug.current}`} key={post._id}>
+          <Link href={`/${post.slug?.current}`} key={post._id}>
             <Card>
               <CardHeader>
                 <CardTitle>{post.title}</CardTitle>
                 <CardDescription>
-                  {new Date(post.publishedAt).toLocaleDateString()}
+                  {post.publishedAt
+                    ? new Date(post.publishedAt).toLocaleDateString()
+                    : "No date available"}{" "}
                 </CardDescription>
               </CardHeader>
-              <CardContent></CardContent>
+              <CardContent>
+                <BlogCardImage image={post.mainImage} alt={post.title} />
+              </CardContent>
             </Card>
           </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
