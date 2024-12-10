@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/Navigation";
+import { Icons } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
@@ -42,13 +45,28 @@ export default function RootLayout({
             <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
               <Navigation />
               <main className="flex-1 overflow-y-auto">
-                <div className="container mx-auto min-h-[calc(100vh-3.5rem)]">
+                <div className="container mx-auto min-h-[calc(100vh-3.5rem)] p-8">
                   {children}
                 </div>
               </main>
               <footer className="border-t border-border/40 py-6 dark:border-border md:px-8 md:py-0">
-                <div className="text-xs text-neutral-500 dark:text-neutral-400 container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+                <div className="text-xs text-neutral-500 dark:text-neutral-400 flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
                   &copy; {year} nehno.com
+                  <div className="flex gap-2 align-middle">
+                    <Button variant="ghost" size="icon">
+                      <Link href="https://github.com/ajlai24" target="_blank">
+                        <Icons.gitHub className="h-6 w-6" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      <Link
+                        href="https://www.linkedin.com/in/devajlai/"
+                        target="_blank"
+                      >
+                        <Icons.linkedin className="h-6 w-6" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </footer>
             </div>

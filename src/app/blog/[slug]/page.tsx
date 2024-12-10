@@ -11,6 +11,16 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Category } from "@/sanity/sanity.types";
 import { Badge } from "@/components/ui/badge";
+import { Refractor, registerLanguage } from "react-refractor";
+import js from "refractor/lang/javascript.js";
+import typescript from "refractor/lang/typescript";
+import json from "refractor/lang/json";
+import { DisqusComments } from "@/components/DisqusComments";
+
+// Then register them
+registerLanguage(js);
+registerLanguage(typescript);
+registerLanguage(json);
 
 const POST_QUERY = `
   *[_type == "post" && slug.current == $slug][0] {
@@ -37,6 +47,11 @@ const portableTextComponents: PortableTextComponents = {
   block: {
     normal: (props) => <p className="my-4">{props.children}</p>,
   },
+  types: {
+    code: ({ value }) => (
+      <Refractor language={value.language} value={value.code} />
+    ),
+  },
 };
 
 export default async function PostPage({
@@ -61,10 +76,12 @@ export default async function PostPage({
   const authorName = post?.author?.name || "";
 
   return (
-    <div className="container mx-auto min-h-screen max-w-4xl p-8 flex flex-col gap-4">
-      <Link href="/" className="hover:underline">
-        ← Back to home
-      </Link>
+    <div className="flex flex-col gap-4">
+      <div className="pb-4">
+        <Link href="/blog" className="hover:underline">
+          ← Back to posts
+        </Link>
+      </div>
 
       <h1 className="text-4xl font-bold">{post.title}</h1>
       <div className="flex gap-3 items-center">
@@ -108,7 +125,7 @@ export default async function PostPage({
         )}
       </div>
 
-      <div className="prose">
+      <div className="prose dark:prose-invert">
         {Array.isArray(post.body) && (
           <PortableText
             key={post._id}
@@ -117,6 +134,8 @@ export default async function PostPage({
           />
         )}
       </div>
+
+      <DisqusComments post={post} />
     </div>
   );
 }

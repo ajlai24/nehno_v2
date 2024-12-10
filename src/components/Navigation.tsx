@@ -5,12 +5,14 @@ import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePathname } from "next/navigation";
+import { Icons } from "@/components/ui/icons";
 
 export function Navigation() {
   const pathname = usePathname();
 
   const tabs = [
     { label: "Home", route: "/" },
+    { label: "Blog", route: "/blog" },
     { label: "About", route: "/about" },
     // { label: "Contact", route: "/contact" },
   ];
@@ -20,7 +22,10 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
-      <div className="flex h-14 items-center px-4">
+      <div className="flex h-14 items-center px-4 gap-2">
+        <Link href="/">
+          <Icons.logo className="h-6 w-6" />
+        </Link>
         <Tabs className="mr-4" value={activeTab}>
           <TabsList className="">
             {tabs.map((tab) => (
