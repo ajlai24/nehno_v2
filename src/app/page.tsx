@@ -56,7 +56,14 @@ export default async function Home() {
           <span className="relative flex items-center justify-center">
             <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-[0.75rem] inline-block border border-slate-500 border-t-0 border-r-[3px] border-b-[3px] border-l-0 p-[3px] rotate-45"></div>
             <span className="vertical-line uppercase text-[10px] tracking-[0.7em] translate-x-[3px]">
-              Scroll
+              <div className="animated-text space-x-1">
+                <span className="letter">S</span>
+                <span className="letter">C</span>
+                <span className="letter">R</span>
+                <span className="letter">O</span>
+                <span className="letter">L</span>
+                <span className="letter">L</span>
+              </div>
             </span>
           </span>
         </span>
