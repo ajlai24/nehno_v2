@@ -90,11 +90,11 @@ export default async function Home() {
 
           <div className="container pt-5 max-w-lg leading-[1.75rem]">
             <p>
-              II&apos;m a full-stack developer based in the San Francisco Bay
-              Area, California, where I live with my wife and two sons. While I
-              have experience across the full stack, my true passion lies in
-              frontend development. I find it incredibly rewarding to work with
-              visuals and see the immediate impact of my creations in real-time.
+              I&apos;m based in the San Francisco Bay Area, California, where I
+              live with my wife and two sons. While I have experience across the
+              full stack, my true passion lies in frontend development. I find
+              it incredibly rewarding to work with visuals and see the immediate
+              impact of my creations in real-time.
             </p>
             <div className="flex justify-center pt-6 pb-3">
               <Avatar className="w-36 h-36">
