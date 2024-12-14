@@ -21,8 +21,8 @@ export function ExperienceCard({
 }: ExperienceCardProps) {
   return (
     <div className="mb-6">
-      <Link href={url}>
-        <div className="p-4 group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80">
+      <Link href={url} target="_blank">
+        <div className="p-4 group relative grid transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80">
           <div className="col-span-2 mb-2 mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
             {dateRange}
           </div>
@@ -33,7 +33,7 @@ export function ExperienceCard({
             <div className="text-sm text-slate-600 dark:text-slate-400 mt-2">
               {body}
             </div>
-            <div className="flex gap-1 flex-wrap my-4">
+            <div className="flex gap-1 flex-wrap mt-4">
               {badges.map((label) => (
                 <Badge
                   key={label}

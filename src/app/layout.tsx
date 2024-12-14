@@ -33,19 +33,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen text-black dark:text-white`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
+          enableColorScheme={false}
         >
           <div className="relative flex min-h-screen flex-col bg-background">
             <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
               <Navigation />
               <main className="flex-1 overflow-y-auto">
-                <div className="container mx-auto min-h-[calc(100vh-3.5rem)] p-8">
+                <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4">
                   {children}
                 </div>
               </main>

@@ -47,6 +47,13 @@ const portableTextComponents: PortableTextComponents = {
   block: {
     normal: (props) => <p className="my-4">{props.children}</p>,
   },
+  marks: {
+    code: ({ children }) => (
+      <code className="bg-slate-400 before:content-none after:content-none p-[2px] rounded-sm">
+        {children}
+      </code>
+    ),
+  },
   types: {
     code: ({ value }) => (
       <Refractor language={value.language} value={value.code} />
