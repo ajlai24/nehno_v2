@@ -16,6 +16,7 @@ import js from "refractor/lang/javascript.js";
 import typescript from "refractor/lang/typescript";
 import json from "refractor/lang/json";
 import { DisqusComments } from "@/components/DisqusComments";
+import { SearchParams } from "next/dist/server/request/search-params";
 
 // Then register them
 registerLanguage(js);
@@ -49,7 +50,7 @@ const portableTextComponents: PortableTextComponents = {
   },
   marks: {
     code: ({ children }) => (
-      <code className="bg-slate-400 before:content-none after:content-none p-[2px] rounded-sm">
+      <code className="bg-slate-300 dark:bg-slate-700 before:content-none after:content-none p-1 rounded-sm">
         {children}
       </code>
     ),
@@ -63,17 +64,22 @@ const portableTextComponents: PortableTextComponents = {
 
 export default async function PostPage({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams: SearchParams;
 }) {
   const { slug } = await params;
+  const { category } = await searchParams;
+  console.log(category);
+
   const post = await client.fetch<SanityDocument>(
     POST_QUERY,
     { slug },
     options
   );
   const postImageUrl = post.mainImage
-    ? urlFor(post.mainImage)?.width(800).height(451).url()
+    ? urlFor(post.mainImage)?.width(1600).height(900).quality(100).url()
     : null;
 
   const authorImage = post?.author?.image;
@@ -82,10 +88,12 @@ export default async function PostPage({
     : undefined;
   const authorName = post?.author?.name || "";
 
+  const queryParams = category ? `?category=${category}` : "";
+
   return (
     <div className="flex flex-col gap-4">
       <div className="pb-4">
-        <Link href="/blog" className="hover:underline">
+        <Link href={`/blog${queryParams}`} className="hover:underline">
           ← Back to posts
         </Link>
       </div>
@@ -119,20 +127,23 @@ export default async function PostPage({
         ))}
       </div>
 
-      <div className="flex align-middle">
-        {postImageUrl && (
-          <Image
-            src={postImageUrl}
-            alt={post.title}
-            className="aspect-video rounded-xl w-full"
-            sizes="100vw"
-            width="550"
-            height="310"
-          />
-        )}
+      <div className="flex align-middle justify-center">
+        <div className="max-w-screen-lg">
+          {postImageUrl && (
+            <Image
+              src={postImageUrl}
+              alt={post.title}
+              className="rounded-xl"
+              width="1568"
+              height="1003"
+              layout="responsive"
+              quality={100}
+            />
+          )}
+        </div>
       </div>
 
-      <div className="prose dark:prose-invert">
+      <div className="prose dark:prose-invert max-w-none">
         {Array.isArray(post.body) && (
           <PortableText
             key={post._id}

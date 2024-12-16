@@ -24,7 +24,7 @@ export default async function Home() {
 
         <div className="order-1 lg:order-2 text-center lg:text-left lg:col-span-2">
           <div>
-            <span className="text-3xl lg:text-6xl">Hello! I&apos;m </span>
+            <span className="text-3xl lg:text-6xl font-bold">Hello! I&apos;m </span>
             <span className="text-3xl lg:text-6xl font-bold text-slate-500">
               Andrew
             </span>
