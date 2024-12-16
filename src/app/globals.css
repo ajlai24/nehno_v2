@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --border: hsl(240 3.7% 15.9%); /* Dark mode border color */
+    --background: hsl(240, 10%, 3.9%);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    *, :before, :after {
+      border-color: var(--border);
+    }
+  }
+}
+
+@layer utilities {
+  .vertical-line::after {
+    content: "";
+    transform-origin: bottom center;
+    position: absolute;
+    width: 1px;
+    height: 71vh;  /* Adjust the height as needed */
+    left: calc(50% - 4px);     /* Center the line horizontally relative to the parent */
+    top: calc(100% + 20px); /* Adjust vertical position as necessary */
+    background: #64748b;  /* Line color */
+    opacity: 0.45;
+    animation: vLineIn 0.75s ease-in-out 1s forwards;
+  }
+}
+
+@keyframes vLineIn {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.letter {
+  @apply inline-block opacity-0 transform translate-y-5;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.letter:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.letter:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.letter:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.letter:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.letter:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.letter:nth-child(6) {
+  animation-delay: 0.6s;
+}
