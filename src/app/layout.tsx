@@ -6,6 +6,8 @@ import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import "./globals.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,8 +47,8 @@ export default function RootLayout({
             <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
               <Navigation />
               <main className="flex-1 overflow-y-auto">
-                <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4">
-                  {children}
+                <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4 flex flex-col">
+                  <Suspense fallback={<Loading />}>{children}</Suspense>
                 </div>
               </main>
               <footer className="border-t border-border/40 py-6 dark:border-border md:px-8 md:py-0">
