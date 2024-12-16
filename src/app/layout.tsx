@@ -5,8 +5,9 @@ import { Navigation } from "@/components/Navigation";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import "./globals.css";
 import { Suspense } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import "./globals.css";
 import Loading from "./loading";
 
 const geistSans = localFont({
@@ -49,6 +50,7 @@ export default function RootLayout({
               <main className="flex-1 overflow-y-auto">
                 <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4 flex flex-col">
                   <Suspense fallback={<Loading />}>{children}</Suspense>
+                  <SpeedInsights />
                 </div>
               </main>
               <footer className="border-t border-border/40 py-6 dark:border-border md:px-8 md:py-0">
