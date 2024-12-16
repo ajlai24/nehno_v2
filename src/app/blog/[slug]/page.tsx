@@ -16,7 +16,6 @@ import js from "refractor/lang/javascript.js";
 import typescript from "refractor/lang/typescript";
 import json from "refractor/lang/json";
 import { DisqusComments } from "@/components/DisqusComments";
-import { SearchParams } from "next/dist/server/request/search-params";
 
 // Then register them
 registerLanguage(js);
@@ -66,11 +65,11 @@ export default async function PostPage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: SearchParams;
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { slug } = await params;
-  const { category } = await searchParams;
+  const category = (await searchParams).category;
 
   const post = await client.fetch<SanityDocument>(
     POST_QUERY,

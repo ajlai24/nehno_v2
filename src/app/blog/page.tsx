@@ -48,7 +48,7 @@ const options = { next: { revalidate: 30 } };
 export default async function Blog({
   searchParams,
 }: {
-  searchParams: { category?: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const categories = await client.fetch<SanityDocument<Category>[]>(
     CATEGORIES_QUERY,
