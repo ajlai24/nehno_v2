@@ -67,6 +67,7 @@ const BlogPosts = ({
       </div>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6">
+        {posts.length === 0 && <div>0 Results</div>}
         {posts.map((post) => (
           <Link
             href={`/blog/${post.slug?.current}?${searchParams.toString()}`}

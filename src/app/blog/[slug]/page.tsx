@@ -57,7 +57,7 @@ const portableTextComponents: PortableTextComponents = {
   },
   types: {
     code: ({ value }) => (
-      <Refractor language={value.language} value={value.code} />
+      <Refractor language={value.language || "text"} value={value.code} />
     ),
   },
 };
@@ -71,7 +71,6 @@ export default async function PostPage({
 }) {
   const { slug } = await params;
   const { category } = await searchParams;
-  console.log(category);
 
   const post = await client.fetch<SanityDocument>(
     POST_QUERY,
