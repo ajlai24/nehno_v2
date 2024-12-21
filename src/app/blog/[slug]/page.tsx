@@ -15,7 +15,7 @@ import { Refractor, registerLanguage } from "react-refractor";
 import js from "refractor/lang/javascript.js";
 import typescript from "refractor/lang/typescript";
 import json from "refractor/lang/json";
-import { DisqusComments } from "@/components/DisqusComments";
+import { DisqusComments } from "@/app/blog/components/DisqusComments";
 
 // Then register them
 registerLanguage(js);

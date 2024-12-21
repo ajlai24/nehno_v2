@@ -13,6 +13,7 @@ export function Navigation() {
   const tabs = [
     { label: "Home", route: "/" },
     { label: "Blog", route: "/blog" },
+    { label: "Switches", route: "/switches" },
   ];
 
   const activeTab =

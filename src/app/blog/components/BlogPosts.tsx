@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BlogCardImage } from "@/components/BlogCardImage";
+import { BlogCardImage } from "@/app/blog/components/BlogCardImage";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BlogPosts = ({
@@ -46,7 +46,7 @@ const BlogPosts = ({
 
   return (
     <div>
-      <div className="pt-4 flex gap-1 items-center">
+      <div className="pt-4 flex gap-1 items-center select-none">
         <Badge
           className="cursor-pointer"
           variant="secondary"
