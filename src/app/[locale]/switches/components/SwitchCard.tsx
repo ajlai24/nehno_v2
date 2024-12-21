@@ -55,7 +55,7 @@ export function SwitchCard({ details }: SwitchCardProps) {
     },
     {
       key: "Lifecycles",
-      value: `${life}M cycles`,
+      value: life ? `${life}M cycles` : "",
     },
     {
       key: "Spring",
