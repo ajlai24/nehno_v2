@@ -8,16 +8,22 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import "./globals.css";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+
+import "../globals.css";
 import Loading from "./loading";
+// import Loading from "./loading";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "../fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -29,13 +35,27 @@ export const metadata: Metadata = {
 
 const year = new Date().getFullYear();
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
+  const { locale } = await params;
+
+  // Ensure that the incoming `locale` is valid
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang={locale} className="scroll-smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen text-black dark:text-white`}
       >
@@ -50,7 +70,11 @@ export default function RootLayout({
               <Navigation />
               <main className="flex-1 overflow-y-auto">
                 <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4 flex flex-col">
-                  <Suspense fallback={<Loading />}>{children}</Suspense>
+                  {/* <Suspense fallback={<Loading />}>{children}</Suspense> */}
+
+                  <NextIntlClientProvider messages={messages}>
+                    <Suspense fallback={<Loading />}>{children}</Suspense>
+                  </NextIntlClientProvider>
                   <SpeedInsights />
                   <Analytics />
                 </div>

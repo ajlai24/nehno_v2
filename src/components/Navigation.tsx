@@ -1,14 +1,15 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 import { Icons } from "@/components/ui/icons";
+import NavigationLink from "@/components/NavigationLink";
 
 export function Navigation() {
-  const pathname = usePathname();
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+  const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : "/";
 
   const tabs = [
     { label: "Home", route: "/" },
@@ -24,14 +25,14 @@ export function Navigation() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
       <div className="flex h-14 items-center px-4 gap-4">
-        <Link href="/">
+        <NavigationLink href="/">
           <Icons.logo className="h-6 w-6" />
-        </Link>
+        </NavigationLink>
         <Tabs className="mr-4" value={activeTab.label}>
           <TabsList>
             {tabs.map((tab) => (
               <TabsTrigger key={tab.route} value={tab.label} asChild>
-                <Link href={tab.route}>{tab.label}</Link>
+                <NavigationLink href={tab.route}>{tab.label}</NavigationLink>
               </TabsTrigger>
             ))}
           </TabsList>

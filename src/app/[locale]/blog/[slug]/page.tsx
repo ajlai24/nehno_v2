@@ -6,7 +6,6 @@ import {
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
-import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Category } from "@/sanity/sanity.types";
@@ -15,7 +14,8 @@ import { Refractor, registerLanguage } from "react-refractor";
 import js from "refractor/lang/javascript.js";
 import typescript from "refractor/lang/typescript";
 import json from "refractor/lang/json";
-import { DisqusComments } from "@/app/blog/components/DisqusComments";
+import { DisqusComments } from "../components/DisqusComments";
+import NavigationLink from "@/components/NavigationLink";
 
 // Then register them
 registerLanguage(js);
@@ -91,9 +91,12 @@ export default async function PostPage({
   return (
     <div className="flex flex-col gap-4">
       <div className="pb-4">
-        <Link href={`/blog${queryParams}`} className="hover:underline">
+        <NavigationLink
+          href={`/blog${queryParams}`}
+          className="hover:underline"
+        >
           ← Back to posts
-        </Link>
+        </NavigationLink>
       </div>
 
       <h1 className="text-4xl font-bold">{post.title}</h1>
