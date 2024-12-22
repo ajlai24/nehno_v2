@@ -7,6 +7,14 @@ import { Tables } from "@/utils/supabase/supabase.types";
 import { SwitchCard } from "./SwitchCard";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import CenteredLoader from "@/components/CenteredLoader";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Icons } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -54,12 +62,32 @@ export default function SwitchesCollection({
 
   return (
     <div className="flex-grow flex flex-col">
-      <h2 className="text-4xl font-bold">Mechanical Keyboard Switches</h2>
+      <h2 className="text-3xl lg:text-4xl font-bold">
+        Mechanical Keyboard Switches
+      </h2>
+      <Drawer>
+        <DrawerTrigger className="lg:hidden" asChild>
+          <div>
+            <Button className="my-2" size="sm" variant="outline">
+              <Icons.filter className="h-5 w-5" />
+              <span>Filter</span>
+            </Button>
+          </div>
+        </DrawerTrigger>
+        <DrawerTitle className="hidden">Filters</DrawerTitle>
+        <DrawerContent>
+          <div className="px-4">
+            <FilterPanel filters={filters} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+
       <div className="grid lg:grid-cols-5 grow">
-        <FilterPanel filters={filters} />
+        <FilterPanel className="hidden lg:block" filters={filters} />
+
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
           <div
-            className={`p-4 w-full ${loading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
+            className={`lg:p-4 lg:pr-0 w-full ${loading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
           >
             {loading ? (
               <div className="col-span-full h-full">

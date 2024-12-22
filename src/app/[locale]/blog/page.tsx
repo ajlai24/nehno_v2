@@ -68,7 +68,7 @@ export default async function Blog({
 
   return (
     <div>
-      <h2 className="text-4xl font-bold">Blog</h2>
+      <h2 className="text-3xl lg:text-4xl font-bold">Blog</h2>
       <BlogPosts
         posts={posts}
         categories={categories}

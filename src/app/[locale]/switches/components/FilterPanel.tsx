@@ -11,11 +11,12 @@ import {
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
-interface FilterPanelProps {
+interface FilterPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
   filters: Record<string, string[]>;
 }
 
-export function FilterPanel({ filters }: FilterPanelProps) {
+export function FilterPanel({ className, filters }: FilterPanelProps) {
   const t = useTranslations("Filters");
   const filterGroups = Object.keys(filters);
 
@@ -26,14 +27,19 @@ export function FilterPanel({ filters }: FilterPanelProps) {
   };
 
   return (
-    <div className="pb-12">
+    <div className={`pb-12 ${className}`}>
       <div className="space-y-4 py-4">
         <div className="py-2 pr-2">
           <div className="flex justify-between items-center align-middle">
             <h2 className="mb-2 text-lg font-semibold tracking-tight">
               {t("title")}
             </h2>
-            <Button onClick={resetFilters} variant="secondary" size="sm">
+            <Button
+              onClick={resetFilters}
+              variant="secondary"
+              size="sm"
+              className="mr-1"
+            >
               Reset
             </Button>
           </div>
