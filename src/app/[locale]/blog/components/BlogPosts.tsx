@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Category, Post } from "@/sanity/sanity.types";
 import {
   Card,
@@ -10,8 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BlogCardImage } from "@/components/BlogCardImage";
+import { BlogCardImage } from "./BlogCardImage";
 import { useRouter, useSearchParams } from "next/navigation";
+import NavigationLink from "@/components/NavigationLink";
 
 const BlogPosts = ({
   posts,
@@ -46,7 +46,7 @@ const BlogPosts = ({
 
   return (
     <div>
-      <div className="pt-4 flex gap-1 items-center">
+      <div className="pt-4 flex gap-1 items-center select-none">
         <Badge
           className="cursor-pointer"
           variant="secondary"
@@ -69,7 +69,7 @@ const BlogPosts = ({
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6">
         {posts.length === 0 && <div>0 Results</div>}
         {posts.map((post) => (
-          <Link
+          <NavigationLink
             href={`/blog/${post.slug?.current}?${searchParams.toString()}`}
             key={post._id}
           >
@@ -98,7 +98,7 @@ const BlogPosts = ({
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </NavigationLink>
         ))}
       </div>
 
