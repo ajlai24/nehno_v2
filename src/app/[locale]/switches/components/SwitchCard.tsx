@@ -66,7 +66,10 @@ export function SwitchCard({ details }: SwitchCardProps) {
   return (
     <Card className="h-full">
       <CardHeader className="p-4 pb-0">
-        <SwitchImage image_src={image_src} alt={fullName} />
+        <div className="flex justify-center">
+          <SwitchImage image_src={image_src} alt={fullName} />
+        </div>
+
         <CardTitle className="pt-4">{fullName}</CardTitle>
         <CardDescription>
           <div className="flex justify-between">
