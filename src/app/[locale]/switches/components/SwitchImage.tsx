@@ -17,17 +17,17 @@ export function SwitchImage({
   alt?: string;
 }) {
   const src = image_src
-    ? urlFor(image_src)?.width(513).height(513).url()
+    ? urlFor(image_src)?.width(300).height(300).url()
     : null;
 
   return src ? (
     <Image
       src={src}
       alt={alt}
-      className="rounded-xl w-full"
+      className="rounded-xl"
       sizes="100vw"
-      width="513"
-      height="513"
+      width="240"
+      height="240"
     />
   ) : null;
 }

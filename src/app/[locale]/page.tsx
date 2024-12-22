@@ -1,4 +1,5 @@
 import { ExperienceCard } from "@/components/ExperienceCard";
+import ScrollAnimated from "@/components/ScrollAnimated";
 import { SectionTitle } from "@/components/SectionTitle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,47 +10,51 @@ import Link from "next/link";
 export default async function Home() {
   return (
     <div className="container mx-auto max-w-screen-lg items-center lg:pt-16 xl:pt-40">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center h-full">
-        <div className="order-2 lg:order-1 flex justify-center">
-          <div className="w-200 h-337 overflow-hidden rounded-full">
-            <Image
-              src="/avatar.png"
-              alt="Avatar"
-              width="260"
-              height="337"
-              objectFit="cover"
-            />
+      <ScrollAnimated>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center h-full">
+          <div className="order-2 lg:order-1 flex justify-center">
+            <div className="w-200 h-337 overflow-hidden rounded-full">
+              <Image
+                src="/avatar.png"
+                alt="Avatar"
+                width="260"
+                height="440"
+                objectFit="cover"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="order-1 lg:order-2 text-center lg:text-left lg:col-span-2">
-          <div>
-            <span className="text-3xl lg:text-6xl font-bold">Hello! I&apos;m </span>
-            <span className="text-3xl lg:text-6xl font-bold text-slate-500">
-              Andrew
-            </span>
-            <p className="text-lg lg:text-2xl pt-3 lg:pt-4">
-              I&apos;m a software developer with a passion for frontend
-              development.
-            </p>
+          <div className="order-1 lg:order-2 text-center lg:text-left lg:col-span-2">
+            <div>
+              <span className="text-3xl lg:text-6xl font-bold">
+                Hello! I&apos;m{" "}
+              </span>
+              <span className="text-3xl lg:text-6xl font-bold text-slate-500">
+                Andrew
+              </span>
+              <p className="text-lg lg:text-2xl pt-3 lg:pt-4">
+                I&apos;m a software developer with a passion for frontend
+                development.
+              </p>
 
-            <div className="flex justify-center lg:justify-start mt-4 lg:mt-2">
-              <Button
-                className="bg-slate-500 text-white px-6 py-3 rounded-lg text-lg flex items-center uppercase"
-                asChild
-              >
-                <Link
-                  href="https://www.linkedin.com/in/devajlai/"
-                  target="_blank"
+              <div className="flex justify-center lg:justify-start mt-4 lg:mt-2">
+                <Button
+                  className="bg-slate-500 text-white px-6 py-3 rounded-lg text-lg flex items-center uppercase"
+                  asChild
                 >
-                  Say hello!
-                  <Icons.linkedin />
-                </Link>
-              </Button>
+                  <Link
+                    href="https://www.linkedin.com/in/devajlai/"
+                    target="_blank"
+                  >
+                    Say hello!
+                    <Icons.linkedin />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </ScrollAnimated>
 
       <div className="hidden lg:block relative pt-8">
         <span className="absolute left-1/2 transform -translate-x-1/2">
@@ -70,48 +75,52 @@ export default async function Home() {
       </div>
 
       <section className="px-4 grid grid-cols-1 lg:grid-cols-2 grid-rows-[auto,auto] gap-y-16 lg:gap-x-16 pt-12 lg:pt-24">
-        <div>
-          <SectionTitle>
-            <span>What&apos;s&nbsp;</span>
-            <span className="text-slate-500 font-bold">nehno</span>
-            <span>?</span>
-          </SectionTitle>
-          <div className="container flex pt-5 max-w-lg leading-[1.75rem]">
-            My first son used to always yell &quot;nehno!&quot; at us while
-            giggling and to this day we still don&apos;t know what he meant.
-            It&apos;s easy enough for a toddler to say so here we are 😛
+        <ScrollAnimated trailProps={{ delay: 300 }}>
+          <div>
+            <SectionTitle>
+              <span>What&apos;s&nbsp;</span>
+              <span className="text-slate-500 font-bold">nehno</span>
+              <span>?</span>
+            </SectionTitle>
+            <div className="container flex pt-5 max-w-lg leading-[1.75rem]">
+              My first son used to always yell &quot;nehno!&quot; at us while
+              giggling and to this day we still don&apos;t know what he meant.
+              It&apos;s easy enough for a toddler to say so here we are 😛
+            </div>
           </div>
-        </div>
+        </ScrollAnimated>
 
         <div className="lg:col-start-2 lg:row-start-2">
-          <SectionTitle position="right">
-            <span>About me</span>
-          </SectionTitle>
+          <ScrollAnimated trailProps={{ delay: 500 }}>
+            <SectionTitle position="right">
+              <span>About me</span>
+            </SectionTitle>
 
-          <div className="container pt-5 max-w-lg leading-[1.75rem]">
-            <p>
-              I&apos;m based in the San Francisco Bay Area, California, where I
-              live with my wife and two sons. While I have experience across the
-              full stack, my true passion lies in frontend development. I find
-              it incredibly rewarding to work with visuals and see the immediate
-              impact of my creations in real-time.
-            </p>
-            <div className="flex justify-center pt-6 pb-3">
-              <Avatar className="w-36 h-36">
-                <AvatarImage
-                  className="object-cover"
-                  src="/kumo.jpg"
-                  alt="Kumo"
-                />
-                <AvatarFallback>Kumo</AvatarFallback>
-              </Avatar>
+            <div className="container pt-5 max-w-lg leading-[1.75rem]">
+              <p>
+                I&apos;m based in the San Francisco Bay Area, California, where
+                I live with my wife and two sons. While I have experience across
+                the full stack, my true passion lies in frontend development. I
+                find it incredibly rewarding to work with visuals and see the
+                immediate impact of my creations in real-time.
+              </p>
+              <div className="flex justify-center pt-6 pb-3">
+                <Avatar className="w-36 h-36">
+                  <AvatarImage
+                    className="object-cover"
+                    src="/kumo.jpg"
+                    alt="Kumo"
+                  />
+                  <AvatarFallback>Kumo</AvatarFallback>
+                </Avatar>
+              </div>
+              <p>
+                We had a beloved Japanese Spitz named Kumo, with soft white fur
+                that made him look like a cloud. Sadly, he passed away at the
+                start of 2024, and we miss him deeply every day.
+              </p>
             </div>
-            <p>
-              We had a beloved Japanese Spitz named Kumo, with soft white fur
-              that made him look like a cloud. Sadly, he passed away at the
-              start of 2024, and we miss him deeply every day.
-            </p>
-          </div>
+          </ScrollAnimated>
         </div>
       </section>
 
