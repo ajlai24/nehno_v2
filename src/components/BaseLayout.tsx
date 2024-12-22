@@ -51,8 +51,6 @@ export default async function BaseLayout({ children, locale }: Props) {
               <Navigation />
               <main className="flex-1 overflow-y-auto">
                 <div className="container mx-auto min-h-[calc(100vh-3.5rem)] pt-8 p-4 flex flex-col">
-                  {/* <Suspense fallback={<Loading />}>{children}</Suspense> */}
-
                   <NextIntlClientProvider messages={messages}>
                     <Suspense fallback={<Loading />}>{children}</Suspense>
                   </NextIntlClientProvider>

@@ -46,9 +46,9 @@ const BlogPosts = ({
 
   return (
     <div>
-      <div className="pt-4 flex gap-1 items-center select-none">
+      <div className="pt-4 flex gap-1 items-center">
         <Badge
-          className="cursor-pointer"
+          className="cursor-pointer select-none"
           variant="secondary"
           onClick={() => handleCategoryChange(undefined)}
         >
@@ -59,7 +59,7 @@ const BlogPosts = ({
             key={category._id}
             variant="secondary"
             onClick={() => handleCategoryChange(category._id)}
-            className="cursor-pointer"
+            className="cursor-pointer select-none"
           >
             {category.title}
           </Badge>
