@@ -8,6 +8,21 @@ import "../globals.css";
 export const metadata: Metadata = {
   title: "Nehno",
   description: "A sofware developer's playground site for experimentation",
+  openGraph: {
+    title: "Nehno",
+    description: "A sofware developer's playground site for experimentation",
+    url: "https://nehno.com",
+    siteName: "Nehno",
+    images: [
+      {
+        url: "https://nehno.com/api/og",
+        width: 800,
+        height: 400,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default async function RootLayout({
