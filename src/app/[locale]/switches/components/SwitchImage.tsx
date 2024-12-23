@@ -28,6 +28,7 @@ export function SwitchImage({
       sizes="100vw"
       width="240"
       height="240"
+      unoptimized
     />
   ) : null;
 }
