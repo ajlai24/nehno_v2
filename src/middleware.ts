@@ -6,11 +6,10 @@ export default async function middleware(req: NextRequest) {
   // If the requested path is `/about`, redirect to `/`
   if (req.nextUrl.pathname === "/about") {
     const url = req.nextUrl.clone();
-    url.pathname = "/"; // Redirect to the home page
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 
-  // If the path is not `/about`, use the internationalization middleware
   return createMiddleware(routing)(req);
 }
 
