@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/drawer";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/Input";
+import { TbSearch } from "react-icons/tb";
+import debounce from "lodash.debounce";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -28,8 +31,19 @@ export default function SwitchesCollection({
 }) {
   const [switches, setSwitches] = useState(initialSwitches);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  const debouncedSearch = debounce((query: string) => {
+    setDebouncedQuery(query);
+  }, 600);
 
   const { selectedFilters } = useFiltersStore();
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch, searchQuery]);
 
   useEffect(() => {
     const fetchFilteredSwitches = async () => {
@@ -38,6 +52,12 @@ export default function SwitchesCollection({
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       let query = supabase.from("switches").select();
+
+      if (debouncedQuery) {
+        query = query.or(
+          `name.ilike.%${debouncedQuery}%,brand.ilike.%${debouncedQuery}%,series.ilike.%${debouncedQuery}%`
+        );
+      }
 
       for (const group in selectedFilters) {
         const filtersArray = Array.from(selectedFilters[group]);
@@ -58,22 +78,53 @@ export default function SwitchesCollection({
     };
 
     fetchFilteredSwitches();
-  }, [selectedFilters]);
+  }, [debouncedQuery, selectedFilters]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setDebouncedQuery(searchQuery);
+    } else {
+      debouncedSearch(searchQuery);
+    }
+  };
 
   return (
     <div className="flex-grow flex flex-col">
-      <h2 className="text-3xl lg:text-4xl font-bold">
-        Mechanical Keyboard Switches
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl lg:text-4xl font-bold">
+          Mechanical Keyboard Switches
+        </h2>
+        <Input
+          className="hidden lg:flex"
+          icon={TbSearch}
+          iconProps={{ behavior: "prepend" }}
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+
       <Drawer>
-        <DrawerTrigger className="lg:hidden" asChild>
-          <div>
+        <div className="flex items-center gap-2 justify-between lg:hidden">
+          <DrawerTrigger className="lg:hidden" asChild>
             <Button className="my-2" size="sm" variant="outline">
               <Icons.filter className="h-5 w-5" />
               <span>Filter</span>
             </Button>
-          </div>
-        </DrawerTrigger>
+          </DrawerTrigger>
+
+          <Input
+            className="lg:hidden h-8"
+            icon={TbSearch}
+            iconProps={{ behavior: "prepend" }}
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
+
         <DrawerTitle className="hidden">Filters</DrawerTitle>
         <DrawerContent>
           <div className="px-4">

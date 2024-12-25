@@ -17,7 +17,7 @@ export function SwitchImage({
   alt?: string;
 }) {
   const src = image_src
-    ? urlFor(image_src)?.width(300).height(300).url()
+    ? urlFor(image_src)?.width(700).height(700).url()
     : null;
 
   return src ? (

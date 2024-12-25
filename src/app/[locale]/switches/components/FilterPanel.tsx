@@ -31,7 +31,7 @@ export function FilterPanel({ className, filters }: FilterPanelProps) {
       <div className="space-y-4 py-4">
         <div className="py-2 pr-2">
           <div className="flex justify-between items-center align-middle">
-            <h2 className="mb-2 text-lg font-semibold tracking-tight">
+            <h2 className="text-lg font-semibold tracking-tight">
               {t("title")}
             </h2>
             <Button
@@ -58,6 +58,7 @@ export function FilterPanel({ className, filters }: FilterPanelProps) {
                         className="flex items-center space-x-2 pb-2"
                       >
                         <Checkbox
+                          className="w-6 h-6 text-xl"
                           id={filter}
                           checked={selectedFilters[group]?.has(filter) || false}
                           onCheckedChange={() => {
@@ -66,7 +67,7 @@ export function FilterPanel({ className, filters }: FilterPanelProps) {
                         />
                         <label
                           htmlFor={filter}
-                          className="text-sm font-medium leading-none cursor-pointer"
+                          className="font-medium leading-none cursor-pointer"
                         >
                           {filter}
                         </label>
