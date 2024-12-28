@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FilterPanel } from "./FilterPanel";
-import { createClient } from "@supabase/supabase-js";
-import { Tables } from "@/utils/supabase/supabase.types";
-import { SwitchCard } from "./SwitchCard";
-import { useFiltersStore } from "@/stores/useFilterStore";
+import { AutoComplete, Option } from "@/components/Autocomplete";
 import CenteredLoader from "@/components/CenteredLoader";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -14,50 +10,37 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Icons } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/Input";
-import { TbSearch } from "react-icons/tb";
-import debounce from "lodash.debounce";
+import { useFiltersStore } from "@/stores/useFilterStore";
+import { Tables } from "@/utils/supabase/supabase.types";
+import { createClient } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+import { FilterPanel } from "./FilterPanel";
+import { SwitchCard } from "./SwitchCard";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+type SwitchDetailsList = Tables<"switches">[];
 
 export default function SwitchesCollection({
   initialSwitches,
   filters,
 }: {
-  initialSwitches: Tables<"switches">[];
+  initialSwitches: SwitchDetailsList;
   filters: Record<string, string[]>;
 }) {
-  const [switches, setSwitches] = useState(initialSwitches);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-
-  const debouncedSearch = debounce((query: string) => {
-    setDebouncedQuery(query);
-  }, 600);
-
-  const { selectedFilters } = useFiltersStore();
-
-  useEffect(() => {
-    debouncedSearch(searchQuery);
-    return () => debouncedSearch.cancel();
-  }, [debouncedSearch, searchQuery]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [value, setValue] = useState<Option>();
+  const [switches, setSwitches] = useState(initialSwitches);
+  const [searchSuggestions, setSearchSuggestions] = useState<Option[]>([]);
+  const { selectedFilters, resetFilters } = useFiltersStore();
 
   useEffect(() => {
     const fetchFilteredSwitches = async () => {
       setLoading(true);
-
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
       let query = supabase.from("switches").select();
-
-      if (debouncedQuery) {
-        query = query.or(
-          `name.ilike.%${debouncedQuery}%,brand.ilike.%${debouncedQuery}%,series.ilike.%${debouncedQuery}%`
-        );
-      }
 
       for (const group in selectedFilters) {
         const filtersArray = Array.from(selectedFilters[group]);
@@ -78,13 +61,72 @@ export default function SwitchesCollection({
     };
 
     fetchFilteredSwitches();
-  }, [debouncedQuery, selectedFilters]);
+  }, [selectedFilters]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      setDebouncedQuery(searchQuery);
+  // Fetch search suggestions based on search input
+  const handleQueryChange = async (searchInput: string) => {
+    setLoadingSuggestions(true);
+    let query = supabase.from("switches").select();
+    query = query
+      .or(
+        `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
+      )
+      .limit(5);
+
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
     } else {
-      debouncedSearch(searchQuery);
+      // Convert to Option
+      const suggestions = data.map((switchDetails) => {
+        const { brand, series, name } = switchDetails;
+        const label = `${brand} ${series} ${name}`;
+        return {
+          value: switchDetails.id,
+          label,
+        };
+      });
+      setSearchSuggestions(suggestions || []);
+      setLoadingSuggestions(false);
+    }
+  };
+
+  // Fetch switches based on selected option
+  const handleSelectOption = async (selectedOption: Option | undefined) => {
+    setLoading(true);
+    if (!selectedOption) {
+      setValue(undefined);
+      resetFilters();
+      setLoading(false);
+      return;
+    }
+    const { value } = selectedOption;
+    let query = supabase.from("switches").select();
+    query = query.or(`id.eq.${value}`);
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
+    } else {
+      setSwitches(data || []);
+    }
+    setLoading(false);
+    setValue(selectedOption);
+  };
+
+  // Do search based on search input
+  const handleSearch = async (searchInput: string) => {
+    setLoading(true);
+    let query = supabase.from("switches").select();
+    query = query.or(
+      `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
+    );
+
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
+    } else {
+      setSwitches(data || []);
+      setLoading(false);
     }
   };
 
@@ -94,14 +136,16 @@ export default function SwitchesCollection({
         <h2 className="text-3xl lg:text-4xl font-bold">
           Mechanical Keyboard Switches
         </h2>
-        <Input
-          className="hidden lg:flex"
-          icon={TbSearch}
-          iconProps={{ behavior: "prepend" }}
+
+        <AutoComplete
+          options={searchSuggestions}
+          emptyMessage="No results."
           placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
+          isLoading={loadingSuggestions}
+          value={value}
+          onSelect={handleSelectOption}
+          onQueryChange={handleQueryChange}
+          onSearch={handleSearch}
         />
       </div>
 
@@ -114,7 +158,7 @@ export default function SwitchesCollection({
             </Button>
           </DrawerTrigger>
 
-          <Input
+          {/* <Input
             className="lg:hidden h-8"
             icon={TbSearch}
             iconProps={{ behavior: "prepend" }}
@@ -122,7 +166,7 @@ export default function SwitchesCollection({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-          />
+          /> */}
         </div>
 
         <DrawerTitle className="hidden">Filters</DrawerTitle>
