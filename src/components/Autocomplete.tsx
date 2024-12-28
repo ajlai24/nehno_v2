@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 export type Option = Record<"value" | "label", string> & Record<string, string>;
 
 type AutoCompleteProps = {
+  className?: string;
   options: Option[];
   emptyMessage: string;
   value?: Option;
@@ -27,6 +28,7 @@ type AutoCompleteProps = {
 };
 
 export const AutoComplete = ({
+  className,
   options,
   placeholder,
   emptyMessage,
@@ -112,8 +114,12 @@ export const AutoComplete = ({
   }, [onSelect]);
 
   return (
-    <CommandPrimitive onKeyDown={handleKeyDown} shouldFilter={false}>
-      <div className="relative">
+    <CommandPrimitive
+      onKeyDown={handleKeyDown}
+      shouldFilter={false}
+      className={cn("rounded-lg shadow-md", className)}
+    >
+      <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md">
         <CommandInput
           ref={inputRef}
           value={inputValue}
@@ -122,7 +128,7 @@ export const AutoComplete = ({
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
           disabled={disabled}
-          className="text-base pr-8"
+          className="text-base pr-9 h-8"
         />
         {inputValue && inputValue?.length > 0 && (
           <Button

@@ -116,6 +116,7 @@ export default function SwitchesCollection({
   // Do search based on search input
   const handleSearch = async (searchInput: string) => {
     setLoading(true);
+    // resetFilters();
     let query = supabase.from("switches").select();
     query = query.or(
       `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
@@ -138,6 +139,7 @@ export default function SwitchesCollection({
         </h2>
 
         <AutoComplete
+          className="hidden lg:block"
           options={searchSuggestions}
           emptyMessage="No results."
           placeholder="Search..."
@@ -158,15 +160,17 @@ export default function SwitchesCollection({
             </Button>
           </DrawerTrigger>
 
-          {/* <Input
-            className="lg:hidden h-8"
-            icon={TbSearch}
-            iconProps={{ behavior: "prepend" }}
+          <AutoComplete
+            className="block lg:hidden"
+            options={searchSuggestions}
+            emptyMessage="No results."
             placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-          /> */}
+            isLoading={loadingSuggestions}
+            value={value}
+            onSelect={handleSelectOption}
+            onQueryChange={handleQueryChange}
+            onSearch={handleSearch}
+          />
         </div>
 
         <DrawerTitle className="hidden">Filters</DrawerTitle>
