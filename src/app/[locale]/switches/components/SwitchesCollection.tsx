@@ -3,6 +3,7 @@
 import { AutoComplete, Option } from "@/components/Autocomplete";
 import CenteredLoader from "@/components/CenteredLoader";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
@@ -16,18 +17,17 @@ import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { FilterPanel } from "./FilterPanel";
 import { SwitchCard } from "./SwitchCard";
+import { SwitchDetailsContent } from "./SwitchDialogContent";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-type SwitchDetailsList = Tables<"switches">[];
-
 export default function SwitchesCollection({
   initialSwitches,
   filters,
 }: {
-  initialSwitches: SwitchDetailsList;
+  initialSwitches: Tables<"switches">[];
   filters: Record<string, string[]>;
 }) {
   const [loading, setLoading] = useState(false);
@@ -36,6 +36,10 @@ export default function SwitchesCollection({
   const [switches, setSwitches] = useState(initialSwitches);
   const [searchSuggestions, setSearchSuggestions] = useState<Option[]>([]);
   const { selectedFilters, resetFilters } = useFiltersStore();
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedSwitch, setSelectedSwitch] = useState<
+    Tables<"switches"> | undefined
+  >();
 
   useEffect(() => {
     const fetchFilteredSwitches = async () => {
@@ -116,7 +120,7 @@ export default function SwitchesCollection({
   // Do search based on search input
   const handleSearch = async (searchInput: string) => {
     setLoading(true);
-    // resetFilters();
+    resetFilters();
     let query = supabase.from("switches").select();
     query = query.or(
       `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
@@ -195,13 +199,23 @@ export default function SwitchesCollection({
             ) : (
               switches.map((switchDetails) => (
                 <div key={switchDetails.id}>
-                  <SwitchCard details={switchDetails} />
+                  <SwitchCard
+                    details={switchDetails}
+                    onClick={() => {
+                      setSelectedSwitch(switchDetails);
+                      setOpen(true);
+                    }}
+                  />
                 </div>
               ))
             )}
           </div>
         </div>
       </div>
+
+      <Dialog open={open} onOpenChange={() => setOpen(false)}>
+        <SwitchDetailsContent details={selectedSwitch} />
+      </Dialog>
     </div>
   );
 }

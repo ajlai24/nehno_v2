@@ -1,6 +1,8 @@
 "use client";
 
-import { Category, Post } from "@/sanity/sanity.types";
+import NavigationLink from "@/components/NavigationLink";
+import { SanityImage } from "@/components/SanityImage";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -8,10 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BlogCardImage } from "./BlogCardImage";
+import { Category, Post } from "@/sanity/sanity.types";
 import { useRouter, useSearchParams } from "next/navigation";
-import NavigationLink from "@/components/NavigationLink";
 
 const BlogPosts = ({
   posts,
@@ -92,7 +92,15 @@ const BlogPosts = ({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <BlogCardImage image={post.mainImage} alt={post.title} />
+                <SanityImage
+                  className="aspect-video w-full"
+                  sanitySrc={post.mainImage}
+                  sanityWidth={800}
+                  sanityHeight={451}
+                  alt={post.title || ""}
+                  width="550"
+                  height="310"
+                />
                 <div className="pt-4">
                   <div className="">{post.excerpt}</div>
                 </div>
