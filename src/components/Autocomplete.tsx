@@ -113,7 +113,7 @@ export const AutoComplete = ({
     <CommandPrimitive
       onKeyDown={handleKeyDown}
       shouldFilter={false}
-      className={cn("rounded-lg shadow-md", className)}
+      className={cn("rounded-lg", className)}
     >
       <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md">
         <CommandInput
