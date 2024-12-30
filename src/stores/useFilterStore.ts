@@ -1,10 +1,11 @@
 import { create } from "zustand";
 
-// Define the store
 interface FilterStore {
-  selectedFilters: Record<string, Set<string>>; // Track selected filters for each filter group
+  selectedFilters: Record<string, Set<string>>;
   toggleFilter: (group: string, filter: string) => void;
   resetFilters: () => void;
+  searchInput: string;
+  setSearchInput: (input: string) => void;
 }
 
 export const useFiltersStore = create<FilterStore>((set) => ({
@@ -25,4 +26,6 @@ export const useFiltersStore = create<FilterStore>((set) => ({
       return { selectedFilters: newFilters };
     }),
   resetFilters: () => set({ selectedFilters: {} }),
+  searchInput: "",
+  setSearchInput: (input) => set({ searchInput: input }),
 }));

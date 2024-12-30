@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useFiltersStore } from "@/stores/useFilterStore";
 import { Command as CommandPrimitive } from "cmdk";
 import debounce from "lodash.debounce";
 import { useCallback, useRef, useState, type KeyboardEvent } from "react";
@@ -18,7 +19,6 @@ type AutoCompleteProps = {
   className?: string;
   options: Option[];
   emptyMessage: string;
-  value?: Option;
   isLoading?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -32,7 +32,6 @@ export const AutoComplete = ({
   options,
   placeholder,
   emptyMessage,
-  value,
   disabled,
   isLoading = false,
   onQueryChange,
@@ -40,11 +39,8 @@ export const AutoComplete = ({
   onSearch,
 }: AutoCompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const { searchInput, setSearchInput } = useFiltersStore();
   const [isOpen, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string | undefined>(
-    value?.label || ""
-  );
 
   const debouncedQuery = useRef(
     debounce((query: string) => {
@@ -56,7 +52,7 @@ export const AutoComplete = ({
 
   // Handle input changes and trigger debounced query
   const handleInputChange = (value: string) => {
-    setInputValue(value);
+    setSearchInput(value);
     debouncedQuery(value);
   };
 
@@ -79,7 +75,7 @@ export const AutoComplete = ({
         if (optionToSelect) {
           onSelect?.(optionToSelect);
         } else {
-          onSearch?.(inputValue || "");
+          onSearch?.(input.value);
         }
       }
 
@@ -87,7 +83,7 @@ export const AutoComplete = ({
         input.blur();
       }
     },
-    [isOpen, options, onSelect, onSearch, inputValue]
+    [isOpen, options, onSelect, onSearch]
   );
 
   const handleBlur = () => {
@@ -96,7 +92,7 @@ export const AutoComplete = ({
 
   const handleSelectOption = useCallback(
     (selectedOption: Option) => {
-      setInputValue(selectedOption.label);
+      setSearchInput(selectedOption.label);
       onSelect?.(selectedOption);
 
       // This is a hack to prevent the input from being focused after the user selects an option
@@ -105,13 +101,13 @@ export const AutoComplete = ({
         inputRef?.current?.blur();
       }, 0);
     },
-    [onSelect]
+    [onSelect, setSearchInput]
   );
 
   const handleClear = useCallback(() => {
-    setInputValue("");
+    setSearchInput("");
     onSelect?.(undefined);
-  }, [onSelect]);
+  }, [onSelect, setSearchInput]);
 
   return (
     <CommandPrimitive
@@ -122,7 +118,7 @@ export const AutoComplete = ({
       <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md">
         <CommandInput
           ref={inputRef}
-          value={inputValue}
+          value={searchInput}
           onValueChange={isLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
           onFocus={() => setOpen(true)}
@@ -130,7 +126,7 @@ export const AutoComplete = ({
           disabled={disabled}
           className="text-base pr-9 h-8"
         />
-        {inputValue && inputValue?.length > 0 && (
+        {searchInput && searchInput?.length > 0 && (
           <Button
             className="absolute right-2 top-0"
             size="icon"

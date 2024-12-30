@@ -14,7 +14,7 @@ import { Icons } from "@/components/ui/icons";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { Tables } from "@/utils/supabase/supabase.types";
 import { createClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FilterPanel } from "./FilterPanel";
 import { SwitchCard } from "./SwitchCard";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
@@ -30,42 +30,55 @@ export default function SwitchesCollection({
   initialSwitches: Tables<"switches">[];
   filters: Record<string, string[]>;
 }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [value, setValue] = useState<Option>();
   const [switches, setSwitches] = useState(initialSwitches);
   const [searchSuggestions, setSearchSuggestions] = useState<Option[]>([]);
-  const { selectedFilters, resetFilters } = useFiltersStore();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedSwitch, setSelectedSwitch] = useState<
     Tables<"switches"> | undefined
   >();
+  const { selectedFilters, resetFilters } = useFiltersStore();
 
-  useEffect(() => {
-    const fetchFilteredSwitches = async () => {
-      setLoading(true);
-      let query = supabase.from("switches").select();
-
-      for (const group in selectedFilters) {
-        const filtersArray = Array.from(selectedFilters[group]);
-        if (filtersArray.length > 0) {
-          query = query.in(group, filtersArray);
-        }
-      }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fetchSwitches = async (query: any) => {
+    try {
       const { data, error } = await query;
 
       if (error) {
-        console.error(error);
-      } else {
-        setSwitches(data || []);
+        throw error;
       }
 
+      setSwitches(data || []);
+    } catch (error) {
+      console.error("Error fetching switches:", error);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    fetchFilteredSwitches();
-  }, [selectedFilters]);
+  const fetchAllSwitches = async () => {
+    setLoading(true);
+    const query = supabase.from("switches").select();
+    setSelectedSwitch(undefined);
+    await fetchSwitches(query);
+  };
+
+  const fetchFilteredSwitches = async () => {
+    setLoading(true);
+
+    let query = supabase.from("switches").select();
+
+    for (const group in selectedFilters) {
+      const filtersArray = Array.from(selectedFilters[group]);
+      if (filtersArray.length > 0) {
+        query = query.in(group, filtersArray);
+      }
+    }
+    setSelectedSwitch(undefined);
+    await fetchSwitches(query);
+  };
 
   // Fetch search suggestions based on search input
   const handleQueryChange = async (searchInput: string) => {
@@ -98,42 +111,43 @@ export default function SwitchesCollection({
   // Fetch switches based on selected option
   const handleSelectOption = async (selectedOption: Option | undefined) => {
     setLoading(true);
+    resetFilters();
+
     if (!selectedOption) {
-      setValue(undefined);
-      resetFilters();
-      setLoading(false);
+      const query = supabase.from("switches").select();
+      await fetchSwitches(query);
       return;
     }
-    const { value } = selectedOption;
-    let query = supabase.from("switches").select();
-    query = query.or(`id.eq.${value}`);
-    const { data, error } = await query;
-    if (error) {
-      console.error(error);
-    } else {
-      setSwitches(data || []);
-    }
-    setLoading(false);
-    setValue(selectedOption);
+
+    const { label } = selectedOption;
+    console.log(label);
+    await handleSearch(label);
   };
 
   // Do search based on search input
   const handleSearch = async (searchInput: string) => {
     setLoading(true);
     resetFilters();
-    let query = supabase.from("switches").select();
-    query = query.or(
-      `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
-    );
+    const { data, error } = await supabase.rpc("search_switches", {
+      query: searchInput,
+    });
 
-    const { data, error } = await query;
-    if (error) {
-      console.error(error);
-    } else {
-      setSwitches(data || []);
-      setLoading(false);
+    try {
+      if (error) {
+        throw error;
+      }
+
+      setSwitches(data || []); // Set the fetched switches or empty array
+    } catch (error) {
+      console.error("Error fetching switches:", error); // Improved error logging
+    } finally {
+      setLoading(false); // Ensure loading is always set to false after fetching
     }
   };
+
+  const memoizedFetchFilteredSwitches = useCallback(fetchFilteredSwitches, [
+    selectedFilters,
+  ]);
 
   return (
     <div className="flex-grow flex flex-col">
@@ -148,14 +162,13 @@ export default function SwitchesCollection({
           emptyMessage="No results."
           placeholder="Search..."
           isLoading={loadingSuggestions}
-          value={value}
           onSelect={handleSelectOption}
           onQueryChange={handleQueryChange}
           onSearch={handleSearch}
         />
       </div>
 
-      <Drawer>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <div className="flex items-center gap-2 justify-between lg:hidden">
           <DrawerTrigger className="lg:hidden" asChild>
             <Button className="my-2" size="sm" variant="outline">
@@ -170,7 +183,6 @@ export default function SwitchesCollection({
             emptyMessage="No results."
             placeholder="Search..."
             isLoading={loadingSuggestions}
-            value={value}
             onSelect={handleSelectOption}
             onQueryChange={handleQueryChange}
             onSearch={handleSearch}
@@ -180,13 +192,23 @@ export default function SwitchesCollection({
         <DrawerTitle className="hidden">Filters</DrawerTitle>
         <DrawerContent>
           <div className="px-4">
-            <FilterPanel filters={filters} />
+            <FilterPanel
+              filters={filters}
+              onFilterChange={memoizedFetchFilteredSwitches}
+              onResetFilters={fetchAllSwitches}
+              closeDrawer={() => setDrawerOpen(false)}
+            />
           </div>
         </DrawerContent>
       </Drawer>
 
       <div className="grid lg:grid-cols-5 grow">
-        <FilterPanel className="hidden lg:block" filters={filters} />
+        <FilterPanel
+          className="hidden lg:block"
+          filters={filters}
+          onFilterChange={memoizedFetchFilteredSwitches}
+          onResetFilters={fetchAllSwitches}
+        />
 
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
           <div
