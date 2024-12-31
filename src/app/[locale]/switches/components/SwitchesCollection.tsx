@@ -218,9 +218,7 @@ export default function SwitchesCollection({
                 <CenteredLoader />
               </div>
             ) : switches.length === 0 ? (
-              <div className="pt-4">
-                0 Results
-              </div>
+              <div className="pt-4">0 Results</div>
             ) : (
               switches.map((switchDetails) => (
                 <div key={switchDetails.id}>
