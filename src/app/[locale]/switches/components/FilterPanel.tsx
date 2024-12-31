@@ -10,20 +10,44 @@ import {
 } from "@/components/ui/accordion";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 interface FilterPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   filters: Record<string, string[]>;
+  onFilterChange?: () => void;
+  onResetFilters?: () => void;
+  closeDrawer?: () => void;
 }
 
-export function FilterPanel({ className, filters }: FilterPanelProps) {
+export function FilterPanel({
+  className,
+  filters,
+  onFilterChange,
+  onResetFilters,
+  closeDrawer,
+}: FilterPanelProps) {
   const t = useTranslations("Filters");
   const filterGroups = Object.keys(filters);
 
-  const { selectedFilters, toggleFilter, resetFilters } = useFiltersStore();
+  const { selectedFilters, toggleFilter, resetFilters, setSearchInput } =
+    useFiltersStore();
 
-  const handleCheckboxChange = (group: string, filter: string) => {
-    toggleFilter(group, filter);
+  useEffect(() => {
+    if (onFilterChange && Object.keys(selectedFilters).length > 0) {
+      onFilterChange();
+    }
+  }, [onFilterChange, selectedFilters]);
+
+  const handleCheckboxChange = async (group: string, filter: string) => {
+    setSearchInput("");
+    await toggleFilter(group, filter);
+  };
+
+  const handleResetFilters = () => {
+    resetFilters();
+    setSearchInput("");
+    onResetFilters?.();
   };
 
   return (
@@ -34,14 +58,18 @@ export function FilterPanel({ className, filters }: FilterPanelProps) {
             <h2 className="text-lg font-semibold tracking-tight">
               {t("title")}
             </h2>
-            <Button
-              onClick={resetFilters}
-              variant="secondary"
-              size="sm"
-              className="mr-1"
-            >
-              Reset
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleResetFilters}
+                variant="secondary"
+                size="sm"
+              >
+                Reset
+              </Button>
+              <Button size="sm" className="lg:hidden" onClick={closeDrawer}>
+                Apply
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-1">

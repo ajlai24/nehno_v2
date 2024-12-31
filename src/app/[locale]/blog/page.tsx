@@ -1,6 +1,6 @@
-import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import { Category, Post } from "@/sanity/sanity.types";
+import { type SanityDocument } from "next-sanity";
 import BlogPosts from "./components/BlogPosts";
 
 const POSTS_QUERY = `*[

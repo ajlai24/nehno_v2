@@ -1,15 +1,15 @@
-import localFont from "next/font/local";
-import { ThemeProvider } from "@/components/theme-provider";
+import Loading from "@/app/[locale]/loading";
 import { Navigation } from "@/components/Navigation";
-import { Icons } from "@/components/ui/icons";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ReactNode, Suspense } from "react";
+import { Icons } from "@/components/ui/icons";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import Loading from "@/app/[locale]/loading";
+import localFont from "next/font/local";
+import Link from "next/link";
+import { ReactNode, Suspense } from "react";
 
 const geistSans = localFont({
   src: "../app/fonts/GeistVF.woff",
@@ -28,7 +28,6 @@ type Props = {
 };
 
 const year = new Date().getFullYear();
-
 
 export default async function BaseLayout({ children, locale }: Props) {
   // Providing all messages to the client

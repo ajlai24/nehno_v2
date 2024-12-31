@@ -1,21 +1,20 @@
+import NavigationLink from "@/components/NavigationLink";
+import { SanityImage } from "@/components/SanityImage";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { client } from "@/sanity/client";
+import { Category } from "@/sanity/sanity.types";
+import { urlFor } from "@/utils/utils";
 import {
   PortableText,
   PortableTextComponents,
   type SanityDocument,
 } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { client } from "@/sanity/client";
-import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Category } from "@/sanity/sanity.types";
-import { Badge } from "@/components/ui/badge";
 import { Refractor, registerLanguage } from "react-refractor";
 import js from "refractor/lang/javascript.js";
-import typescript from "refractor/lang/typescript";
 import json from "refractor/lang/json";
+import typescript from "refractor/lang/typescript";
 import { DisqusComments } from "../components/DisqusComments";
-import NavigationLink from "@/components/NavigationLink";
 
 // Then register them
 registerLanguage(js);
@@ -34,12 +33,6 @@ const POST_QUERY = `
     }
   }
 `;
-
-const { projectId, dataset } = client.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
 
 const options = { next: { revalidate: 30 } };
 
@@ -76,14 +69,13 @@ export default async function PostPage({
     { slug },
     options
   );
-  const postImageUrl = post.mainImage
-    ? urlFor(post.mainImage)?.width(1600).height(900).quality(100).url()
-    : null;
 
   const authorImage = post?.author?.image;
-  const authorImageUrl = authorImage
-    ? urlFor(authorImage)?.width(400).height(400).url()
-    : undefined;
+  const authorImageUrl = urlFor({
+    source: authorImage,
+    width: 400,
+    height: 400,
+  });
   const authorName = post?.author?.name || "";
 
   const queryParams = category ? `?category=${category}` : "";
@@ -101,14 +93,16 @@ export default async function PostPage({
 
       <h1 className="text-4xl font-bold">{post.title}</h1>
       <div className="flex gap-3 items-center">
-        <Avatar>
-          <AvatarImage
-            className="object-cover"
-            src={authorImageUrl}
-            alt={authorName}
-          />
-          <AvatarFallback>AL</AvatarFallback>
-        </Avatar>
+        {authorImageUrl && (
+          <Avatar>
+            <AvatarImage
+              className="object-cover"
+              src={authorImageUrl}
+              alt={authorName}
+            />
+            <AvatarFallback>AL</AvatarFallback>
+          </Avatar>
+        )}
         <div>
           <div>{authorName}</div>
           <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -130,17 +124,14 @@ export default async function PostPage({
 
       <div className="flex align-middle justify-center">
         <div className="max-w-screen-lg">
-          {postImageUrl && (
-            <Image
-              src={postImageUrl}
-              alt={post.title}
-              className="rounded-xl"
-              width="1568"
-              height="1003"
-              layout="responsive"
-              quality={100}
-            />
-          )}
+          <SanityImage
+            sanitySrc={post.mainImage}
+            sanityWidth={1600}
+            sanityHeight={900}
+            alt={post.title}
+            width="1568"
+            height="1003"
+          />
         </div>
       </div>
 
