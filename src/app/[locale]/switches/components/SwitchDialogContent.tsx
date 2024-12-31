@@ -29,7 +29,7 @@ export function SwitchDetailsContent({
   const title = `${brand} ${series} ${name}`;
 
   return (
-    <DialogContent className={cn("w-11/12", className)}>
+    <DialogContent className={cn("w-11/12 rounded-lg", className)}>
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
