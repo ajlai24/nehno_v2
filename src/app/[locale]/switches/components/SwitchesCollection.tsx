@@ -168,9 +168,9 @@ export default function SwitchesCollection({
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <div className="flex items-center gap-2 justify-between lg:hidden">
+        <div className="my-2 flex items-center gap-2 justify-between lg:hidden">
           <DrawerTrigger className="lg:hidden" asChild>
-            <Button className="my-2" size="sm" variant="outline">
+            <Button className="h-8" size="sm" variant="outline">
               <Icons.filter className="h-5 w-5" />
               <span>Filter</span>
             </Button>

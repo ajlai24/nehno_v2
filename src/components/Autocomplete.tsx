@@ -115,7 +115,7 @@ export const AutoComplete = ({
       shouldFilter={false}
       className={cn("rounded-lg", className)}
     >
-      <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md">
+      <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md box-border">
         <CommandInput
           ref={inputRef}
           value={searchInput}
@@ -124,7 +124,7 @@ export const AutoComplete = ({
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
           disabled={disabled}
-          className="text-base pr-9 h-8"
+          className="text-base pr-9 !h-[30px]"
         />
         {searchInput && searchInput?.length > 0 && (
           <Button
@@ -137,10 +137,10 @@ export const AutoComplete = ({
           </Button>
         )}
       </div>
-      <div className="relative mt-1">
+      <div className="relative">
         <div
           className={cn(
-            "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
+            "animate-in fade-in-0 zoom-in-95 absolute top-1 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
             isOpen ? "block" : "hidden"
           )}
         >
