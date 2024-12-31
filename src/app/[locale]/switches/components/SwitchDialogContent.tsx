@@ -21,7 +21,13 @@ export function SwitchDetailsContent({
   details,
 }: SwitchDetailsContentProps) {
   if (!details) {
-    return <div>Unable to load details. Please try again later</div>;
+    return (
+      <DialogContent className={cn("w-11/12 rounded-lg", className)}>
+        <div className="text-center text-gray-500">
+          Unable to load details. Please try again later.
+        </div>
+      </DialogContent>
+    );
   }
 
   const { brand, series, name, image_src } = details;
