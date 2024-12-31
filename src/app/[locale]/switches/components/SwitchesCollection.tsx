@@ -120,7 +120,6 @@ export default function SwitchesCollection({
     }
 
     const { label } = selectedOption;
-    console.log(label);
     await handleSearch(label);
   };
 
@@ -217,6 +216,10 @@ export default function SwitchesCollection({
             {loading ? (
               <div className="col-span-full h-full">
                 <CenteredLoader />
+              </div>
+            ) : switches.length === 0 ? (
+              <div className="pt-4">
+                0 Results
               </div>
             ) : (
               switches.map((switchDetails) => (

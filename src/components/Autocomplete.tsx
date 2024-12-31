@@ -128,7 +128,7 @@ export const AutoComplete = ({
         />
         {searchInput && searchInput?.length > 0 && (
           <Button
-            className="absolute right-2 top-0"
+            className="absolute right-2 top-1 rounded-full p-1 w-6 h-6"
             size="icon"
             variant="ghost"
             onClick={handleClear}
@@ -140,7 +140,7 @@ export const AutoComplete = ({
       <div className="relative mt-1">
         <div
           className={cn(
-            "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl outline-none bg-white dark:bg-neutral-600",
+            "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
             isOpen ? "block" : "hidden"
           )}
         >
