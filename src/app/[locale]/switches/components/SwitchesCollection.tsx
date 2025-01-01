@@ -34,8 +34,14 @@ export default function SwitchesCollection({
   const [queryType, setQueryType] = useState<"filtered" | "search" | "all">(
     "all"
   );
-  const { searchQuery, setSearchQuery, resetFilters, selectedFilters } =
-    useFiltersStore();
+  const {
+    searchQuery,
+    setSearchQuery,
+    resetFilters,
+    selectedFilters,
+    forceMin,
+    forceMax,
+  } = useFiltersStore();
 
   const { searchSuggestions, loadingSuggestions, handleQueryChange } =
     useSwitches();
@@ -48,13 +54,22 @@ export default function SwitchesCollection({
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ["switches", queryType, selectedFilters, searchQuery],
+    queryKey: [
+      "switches",
+      queryType,
+      selectedFilters,
+      searchQuery,
+      forceMin,
+      forceMax,
+    ],
     queryFn: ({ pageParam = 0 }) => {
       return fetchSwitches({
         pageParam,
         queryType,
         selectedFilters,
         searchQuery,
+        forceMin,
+        forceMax,
       });
     },
     initialPageParam: 0,
@@ -78,16 +93,18 @@ export default function SwitchesCollection({
   });
 
   useEffect(() => {
-    if (selectedFilters && Object.keys(selectedFilters).length > 0) {
-      setQueryType("filtered");
-    } else if (searchQuery) {
+    if (searchQuery) {
       setQueryType("search");
+    } else if (
+      Object.keys(selectedFilters).length > 0 ||
+      forceMin ||
+      forceMax
+    ) {
+      setQueryType("filtered");
     } else {
       setQueryType("all");
     }
-  }, [selectedFilters, searchQuery]);
-
-  const switches = data?.pages.flatMap((page) => page.switches) || [];
+  }, [selectedFilters, forceMin, forceMax, searchQuery]);
 
   const handleSelect = (selectedOption: Option | undefined) => {
     resetFilters();
@@ -114,6 +131,8 @@ export default function SwitchesCollection({
     resetFilters();
     setQueryType("all");
   };
+
+  const switches = data?.pages.flatMap((page) => page.switches) || [];
 
   return (
     <div className="flex-grow flex flex-col">
