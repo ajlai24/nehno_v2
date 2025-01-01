@@ -32,7 +32,14 @@ export const useFiltersStore = create<FilterStore>((set) => ({
       newFilters[group][filter] = !newFilters[group][filter];
       return { selectedFilters: newFilters };
     }),
-  resetFilters: () => set({ selectedFilters: {} }),
+  resetFilters: () =>
+    set({
+      selectedFilters: {},
+      forceMin: 0,
+      forceMax: 100,
+      inputMin: "0",
+      inputMax: "100",
+    }),
   searchInput: "",
   setSearchInput: (input) => set({ searchInput: input }),
   searchQuery: "",

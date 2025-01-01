@@ -119,6 +119,10 @@ export default function SwitchesCollection({
 
   const handleSearch = (searchInput: string) => {
     resetFilters();
+    if (searchInput === "") {
+      setQueryType("all");
+      return;
+    }
     setSearchQuery(searchInput);
     setQueryType("search");
   };
