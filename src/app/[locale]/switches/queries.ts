@@ -40,22 +40,20 @@ export const fetchSwitches = async ({
 }) => {
   // Apply search if queryType is "search"
   if (queryType === "search" && searchQuery) {
-    const {
-      data: switches,
-      count,
-      error,
-    } = await supabase
-      .rpc("search_switches", {
-        query: searchQuery,
-      })
-      .range(pageParam * ITEMS_PER_PAGE, (pageParam + 1) * ITEMS_PER_PAGE - 1);
+    const { data: switches, error } = await supabase.rpc("search_switches", {
+      query: searchQuery,
+      page: pageParam,
+      items_per_page: ITEMS_PER_PAGE,
+    });
 
     if (error) {
       throw new Error("Error fetching search results");
     }
 
-    const totalPages = count ? Math.ceil(count / ITEMS_PER_PAGE) : 0;
-    return { switches, totalPages };
+    const totalCount = switches?.[0]?.total_count || 0;
+    const totalPages = totalCount ? Math.ceil(totalCount / ITEMS_PER_PAGE) : 0;
+
+    return { switches, totalPages, totalCount };
   }
 
   // Fetch all switches if no filters are provided
