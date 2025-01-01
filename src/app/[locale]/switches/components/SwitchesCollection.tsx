@@ -20,6 +20,7 @@ import { SwitchDetailsContent } from "./SwitchDialogContent";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchSwitches } from "../queries";
+import { useInView } from "react-intersection-observer";
 
 export default function SwitchesCollection({
   filters,
@@ -65,6 +66,15 @@ export default function SwitchesCollection({
     },
     getPreviousPageParam: (lastPage, allPages, lastPageParam) => {
       return lastPageParam === 0 ? undefined : lastPageParam - 1;
+    },
+  });
+
+  const { ref: loadMoreRef } = useInView({
+    triggerOnce: false,
+    onChange: (inView) => {
+      if (inView && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
     },
   });
 
@@ -193,14 +203,9 @@ export default function SwitchesCollection({
                 </div>
               ))
             )}
-
-            <Button
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
-            >
-              Next page
-            </Button>
           </div>
+
+          <div ref={loadMoreRef} className="h-16" />
         </div>
       </div>
 
