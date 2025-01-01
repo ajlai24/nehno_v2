@@ -1,4 +1,5 @@
 import BaseLayout from "@/components/BaseLayout";
+import ClientQueryProvider from "@/components/ClientQueryProvider";
 import { Locale, routing } from "@/i18n/routing";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -39,5 +40,9 @@ export default async function RootLayout({
     notFound();
   }
 
-  return <BaseLayout locale={locale}>{children}</BaseLayout>;
+  return (
+    <ClientQueryProvider>
+      <BaseLayout locale={locale}>{children}</BaseLayout>
+    </ClientQueryProvider>
+  );
 }

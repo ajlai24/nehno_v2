@@ -39,7 +39,7 @@ export const AutoComplete = ({
   onSearch,
 }: AutoCompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { searchInput, setSearchInput } = useFiltersStore();
+  const { searchInput, setSearchInput, setSearchQuery } = useFiltersStore();
   const [isOpen, setOpen] = useState(false);
 
   const debouncedQuery = useRef(
@@ -75,6 +75,7 @@ export const AutoComplete = ({
         if (optionToSelect) {
           onSelect?.(optionToSelect);
         } else {
+          setSearchQuery(input.value);
           onSearch?.(input.value);
         }
       }
@@ -83,7 +84,7 @@ export const AutoComplete = ({
         input.blur();
       }
     },
-    [isOpen, options, onSelect, onSearch]
+    [isOpen, options, onSelect, onSearch, setSearchQuery]
   );
 
   const handleBlur = () => {
@@ -93,6 +94,7 @@ export const AutoComplete = ({
   const handleSelectOption = useCallback(
     (selectedOption: Option) => {
       setSearchInput(selectedOption.label);
+      setSearchQuery(selectedOption.label);
       onSelect?.(selectedOption);
 
       // This is a hack to prevent the input from being focused after the user selects an option
@@ -101,13 +103,14 @@ export const AutoComplete = ({
         inputRef?.current?.blur();
       }, 0);
     },
-    [onSelect, setSearchInput]
+    [onSelect, setSearchInput, setSearchQuery]
   );
 
   const handleClear = useCallback(() => {
     setSearchInput("");
+    setSearchQuery("");
     onSelect?.(undefined);
-  }, [onSelect, setSearchInput]);
+  }, [onSelect, setSearchInput, setSearchQuery]);
 
   return (
     <CommandPrimitive
