@@ -141,9 +141,12 @@ export default function SwitchesCollection({
   return (
     <div className="flex-grow flex flex-col">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl lg:text-4xl font-bold">
-          Mechanical Keyboard Switches
-        </h2>
+        <div>
+          <h2 className="text-3xl lg:text-4xl font-bold">
+            Mechanical Keyboard Switches
+          </h2>
+          <div className="text-neutral-500 text-sm">(Work in progress)</div>
+        </div>
 
         <AutoComplete
           className="hidden lg:block"
