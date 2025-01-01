@@ -1,7 +1,6 @@
 "use client";
 
 import { AutoComplete, Option } from "@/components/Autocomplete";
-import CenteredLoader from "@/components/CenteredLoader";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import {
@@ -11,142 +10,110 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Icons } from "@/components/ui/icons";
+import { useSwitches } from "@/hooks/use-switches";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { Tables } from "@/utils/supabase/supabase.types";
-import { createClient } from "@supabase/supabase-js";
-import { useCallback, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
+import { fetchSwitches } from "../queries";
 import { FilterPanel } from "./FilterPanel";
-import { SwitchCard } from "./SwitchCard";
+import { SwitchCollectionContent } from "./SwitchCollectionContent";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 export default function SwitchesCollection({
-  initialSwitches,
   filters,
 }: {
-  initialSwitches: Tables<"switches">[];
   filters: Record<string, string[]>;
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [switches, setSwitches] = useState(initialSwitches);
-  const [searchSuggestions, setSearchSuggestions] = useState<Option[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [selectedSwitch, setSelectedSwitch] = useState<
     Tables<"switches"> | undefined
   >();
-  const { selectedFilters, resetFilters } = useFiltersStore();
+  const [queryType, setQueryType] = useState<"filtered" | "search" | "all">(
+    "all"
+  );
+  const { searchQuery, setSearchQuery, resetFilters, selectedFilters } =
+    useFiltersStore();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fetchSwitches = async (query: any) => {
-    try {
-      const { data, error } = await query;
+  const { searchSuggestions, loadingSuggestions, handleQueryChange } =
+    useSwitches();
 
-      if (error) {
-        throw error;
-      }
-
-      setSwitches(data || []);
-    } catch (error) {
-      console.error("Error fetching switches:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAllSwitches = async () => {
-    setLoading(true);
-    const query = supabase.from("switches").select();
-    setSelectedSwitch(undefined);
-    await fetchSwitches(query);
-  };
-
-  const fetchFilteredSwitches = async () => {
-    setLoading(true);
-
-    let query = supabase.from("switches").select();
-
-    for (const group in selectedFilters) {
-      const filtersArray = Array.from(selectedFilters[group]);
-      if (filtersArray.length > 0) {
-        query = query.in(group, filtersArray);
-      }
-    }
-    setSelectedSwitch(undefined);
-    await fetchSwitches(query);
-  };
-
-  // Fetch search suggestions based on search input
-  const handleQueryChange = async (searchInput: string) => {
-    setLoadingSuggestions(true);
-    let query = supabase.from("switches").select();
-    query = query
-      .or(
-        `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
-      )
-      .limit(5);
-
-    const { data, error } = await query;
-    if (error) {
-      console.error(error);
-    } else {
-      // Convert to Option
-      const suggestions = data.map((switchDetails) => {
-        const { brand, series, name } = switchDetails;
-        const label = `${brand} ${series} ${name}`;
-        return {
-          value: switchDetails.id,
-          label,
-        };
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useInfiniteQuery({
+    queryKey: ["switches", queryType, selectedFilters, searchQuery],
+    queryFn: ({ pageParam = 0 }) => {
+      return fetchSwitches({
+        pageParam,
+        queryType,
+        selectedFilters,
+        searchQuery,
       });
-      setSearchSuggestions(suggestions || []);
-      setLoadingSuggestions(false);
-    }
-  };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      const { totalPages } = lastPage;
+      const nextPageIndex = lastPageParam + 1;
+      return nextPageIndex >= totalPages ? undefined : nextPageIndex;
+    },
+    getPreviousPageParam: (lastPage, allPages, lastPageParam) => {
+      return lastPageParam === 0 ? undefined : lastPageParam - 1;
+    },
+  });
 
-  // Fetch switches based on selected option
-  const handleSelectOption = async (selectedOption: Option | undefined) => {
-    setLoading(true);
-    resetFilters();
-
-    if (!selectedOption) {
-      const query = supabase.from("switches").select();
-      await fetchSwitches(query);
-      return;
-    }
-
-    const { label } = selectedOption;
-    await handleSearch(label);
-  };
-
-  // Do search based on search input
-  const handleSearch = async (searchInput: string) => {
-    setLoading(true);
-    resetFilters();
-    const { data, error } = await supabase.rpc("search_switches", {
-      query: searchInput,
-    });
-
-    try {
-      if (error) {
-        throw error;
+  const { ref: loadMoreRef } = useInView({
+    triggerOnce: false,
+    onChange: (inView) => {
+      if (inView && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
       }
+    },
+  });
 
-      setSwitches(data || []); // Set the fetched switches or empty array
-    } catch (error) {
-      console.error("Error fetching switches:", error); // Improved error logging
-    } finally {
-      setLoading(false); // Ensure loading is always set to false after fetching
+  useEffect(() => {
+    if (selectedFilters && Object.keys(selectedFilters).length > 0) {
+      setQueryType("filtered");
+    } else if (searchQuery) {
+      setQueryType("search");
+    } else {
+      setQueryType("all");
+    }
+  }, [selectedFilters, searchQuery]);
+
+  const switches = data?.pages.flatMap((page) => page.switches) || [];
+
+  const handleSelect = (selectedOption: Option | undefined) => {
+    resetFilters();
+    if (!selectedOption) {
+      setQueryType("all");
+    } else {
+      const { label } = selectedOption;
+      setSearchQuery(label);
+      setQueryType("search");
     }
   };
 
-  const memoizedFetchFilteredSwitches = useCallback(fetchFilteredSwitches, [
-    selectedFilters,
-  ]);
+  const handleSearch = (searchInput: string) => {
+    resetFilters();
+    setSearchQuery(searchInput);
+    setQueryType("search");
+  };
+
+  const handleFilterChange = () => {
+    setQueryType("filtered");
+  };
+
+  const handleResetFilters = () => {
+    resetFilters();
+    setQueryType("all");
+  };
 
   return (
     <div className="flex-grow flex flex-col">
@@ -161,16 +128,16 @@ export default function SwitchesCollection({
           emptyMessage="No results."
           placeholder="Search..."
           isLoading={loadingSuggestions}
-          onSelect={handleSelectOption}
           onQueryChange={handleQueryChange}
+          onSelect={handleSelect}
           onSearch={handleSearch}
         />
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <div className="flex items-center gap-2 justify-between lg:hidden">
+        <div className="my-2 flex items-center gap-2 justify-between lg:hidden">
           <DrawerTrigger className="lg:hidden" asChild>
-            <Button className="my-2" size="sm" variant="outline">
+            <Button className="h-8" size="sm" variant="outline">
               <Icons.filter className="h-5 w-5" />
               <span>Filter</span>
             </Button>
@@ -182,8 +149,8 @@ export default function SwitchesCollection({
             emptyMessage="No results."
             placeholder="Search..."
             isLoading={loadingSuggestions}
-            onSelect={handleSelectOption}
             onQueryChange={handleQueryChange}
+            onSelect={handleSelect}
             onSearch={handleSearch}
           />
         </div>
@@ -193,8 +160,8 @@ export default function SwitchesCollection({
           <div className="px-4">
             <FilterPanel
               filters={filters}
-              onFilterChange={memoizedFetchFilteredSwitches}
-              onResetFilters={fetchAllSwitches}
+              onFilterChange={handleFilterChange}
+              onResetFilters={handleResetFilters}
               closeDrawer={() => setDrawerOpen(false)}
             />
           </div>
@@ -205,34 +172,23 @@ export default function SwitchesCollection({
         <FilterPanel
           className="hidden lg:block"
           filters={filters}
-          onFilterChange={memoizedFetchFilteredSwitches}
-          onResetFilters={fetchAllSwitches}
+          onFilterChange={handleFilterChange}
+          onResetFilters={handleResetFilters}
         />
 
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
           <div
-            className={`lg:p-4 lg:pr-0 w-full ${loading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
+            className={`lg:p-4 lg:pr-0 w-full ${isLoading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
           >
-            {loading ? (
-              <div className="col-span-full h-full">
-                <CenteredLoader />
-              </div>
-            ) : switches.length === 0 ? (
-              <div className="pt-4">0 Results</div>
-            ) : (
-              switches.map((switchDetails) => (
-                <div key={switchDetails.id}>
-                  <SwitchCard
-                    details={switchDetails}
-                    onClick={() => {
-                      setSelectedSwitch(switchDetails);
-                      setOpen(true);
-                    }}
-                  />
-                </div>
-              ))
-            )}
+            <SwitchCollectionContent
+              isLoading={isLoading}
+              isError={isError}
+              switches={switches}
+              setSelectedSwitch={setSelectedSwitch}
+              setOpen={setOpen}
+            />
           </div>
+          <div ref={loadMoreRef} className="h-16" />
         </div>
       </div>
 

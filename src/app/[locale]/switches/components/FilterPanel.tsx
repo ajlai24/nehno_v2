@@ -30,8 +30,13 @@ export function FilterPanel({
   const t = useTranslations("Filters");
   const filterGroups = Object.keys(filters);
 
-  const { selectedFilters, toggleFilter, resetFilters, setSearchInput } =
-    useFiltersStore();
+  const {
+    selectedFilters,
+    toggleFilter,
+    resetFilters,
+    setSearchInput,
+    setSearchQuery,
+  } = useFiltersStore();
 
   useEffect(() => {
     if (onFilterChange && Object.keys(selectedFilters).length > 0) {
@@ -41,12 +46,14 @@ export function FilterPanel({
 
   const handleCheckboxChange = async (group: string, filter: string) => {
     setSearchInput("");
+    setSearchQuery("");
     await toggleFilter(group, filter);
   };
 
   const handleResetFilters = () => {
     resetFilters();
     setSearchInput("");
+    setSearchQuery("");
     onResetFilters?.();
   };
 
@@ -88,7 +95,7 @@ export function FilterPanel({
                         <Checkbox
                           className="w-6 h-6 text-xl"
                           id={filter}
-                          checked={selectedFilters[group]?.has(filter) || false}
+                          checked={selectedFilters[group]?.[filter] || false}
                           onCheckedChange={() => {
                             handleCheckboxChange(group, filter);
                           }}

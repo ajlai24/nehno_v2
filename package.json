@@ -1,6 +1,6 @@
 {
   "name": "nehno",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -26,6 +26,7 @@
     "@sanity/image-url": "^1.1.0",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@tanstack/react-query": "^5.62.11",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "class-variance-authority": "^0.7.1",
