@@ -1,16 +1,18 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { useFiltersStore } from "@/stores/useFilterStore";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useFiltersStore } from "@/stores/useFilterStore";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+// import { SliderRange } from "./SliderRange";
+// import { Input } from "@/components/ui/input";
 
 interface FilterPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -28,8 +30,6 @@ export function FilterPanel({
   closeDrawer,
 }: FilterPanelProps) {
   const t = useTranslations("Filters");
-  const filterGroups = Object.keys(filters);
-
   const {
     selectedFilters,
     toggleFilter,
@@ -37,6 +37,8 @@ export function FilterPanel({
     setSearchInput,
     setSearchQuery,
   } = useFiltersStore();
+  // const [forceMin, setForceMin] = useState<number>(0);
+  // const [forceMax, setForceMax] = useState<number>(100);
 
   useEffect(() => {
     if (onFilterChange && Object.keys(selectedFilters).length > 0) {
@@ -56,6 +58,13 @@ export function FilterPanel({
     setSearchQuery("");
     onResetFilters?.();
   };
+
+  const checkboxFilterKeys = ["feel", "brand"];
+  const filterKeys = Object.keys(filters);
+
+  const checkboxFilters = filterKeys.filter((key) =>
+    checkboxFilterKeys.includes(key)
+  );
 
   return (
     <div className={`pb-12 ${className}`}>
@@ -80,8 +89,8 @@ export function FilterPanel({
           </div>
 
           <div className="space-y-1">
-            <Accordion defaultValue={filterGroups} type="multiple">
-              {filterGroups.map((group) => (
+            <Accordion defaultValue={filterKeys} type="multiple">
+              {checkboxFilters.map((group) => (
                 <AccordionItem key={group} value={group}>
                   <AccordionTrigger className="font-semibold">
                     {t(group)}
@@ -111,6 +120,28 @@ export function FilterPanel({
                   </AccordionContent>
                 </AccordionItem>
               ))}
+
+              {/* <AccordionItem value="force">
+                <AccordionTrigger className="font-semibold">
+                  Force and Distance
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div>Operation Force</div>
+                  <SliderRange
+                    defaultValue={[forceMin, forceMax]}
+                    minStepsBetweenThumbs={1}
+                    max={100}
+                    min={0}
+                    step={1}
+                    // onValueChange={handleValueChange}
+                    className="py-4"
+                  />
+                  <div className="flex justify-between gap-2">
+                    <Input value={forceMin} onChange={() => {}} />
+                    <Input value={forceMax} onChange={() => {}} />
+                  </div>
+                </AccordionContent>
+              </AccordionItem> */}
             </Accordion>
           </div>
         </div>
