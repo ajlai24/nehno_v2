@@ -1,7 +1,6 @@
 "use client";
 
 import { AutoComplete, Option } from "@/components/Autocomplete";
-import CenteredLoader from "@/components/CenteredLoader";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import {
@@ -12,15 +11,15 @@ import {
 } from "@/components/ui/drawer";
 import { Icons } from "@/components/ui/icons";
 import { useSwitches } from "@/hooks/use-switches";
-import { Tables } from "@/utils/supabase/supabase.types";
-import { useEffect, useState } from "react";
-import { FilterPanel } from "./FilterPanel";
-import { SwitchCard } from "./SwitchCard";
-import { SwitchDetailsContent } from "./SwitchDialogContent";
 import { useFiltersStore } from "@/stores/useFilterStore";
+import { Tables } from "@/utils/supabase/supabase.types";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchSwitches } from "../queries";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { fetchSwitches } from "../queries";
+import { FilterPanel } from "./FilterPanel";
+import { SwitchCollectionContent } from "./SwitchCollectionContent";
+import { SwitchDetailsContent } from "./SwitchDialogContent";
 
 export default function SwitchesCollection({
   filters,
@@ -87,9 +86,6 @@ export default function SwitchesCollection({
       setQueryType("all");
     }
   }, [selectedFilters, searchQuery]);
-
-  if (isLoading) return <CenteredLoader />;
-  if (isError) return <div>Error loading switches</div>;
 
   const switches = data?.pages.flatMap((page) => page.switches) || [];
 
@@ -184,27 +180,14 @@ export default function SwitchesCollection({
           <div
             className={`lg:p-4 lg:pr-0 w-full ${isLoading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
           >
-            {isLoading ? (
-              <div className="col-span-full h-full">
-                <CenteredLoader />
-              </div>
-            ) : switches.length === 0 ? (
-              <div className="pt-4">0 Results</div>
-            ) : (
-              switches.map((switchDetails) => (
-                <div key={switchDetails.id}>
-                  <SwitchCard
-                    details={switchDetails}
-                    onClick={() => {
-                      setSelectedSwitch(switchDetails);
-                      setOpen(true);
-                    }}
-                  />
-                </div>
-              ))
-            )}
+            <SwitchCollectionContent
+              isLoading={isLoading}
+              isError={isError}
+              switches={switches}
+              setSelectedSwitch={setSelectedSwitch}
+              setOpen={setOpen}
+            />
           </div>
-
           <div ref={loadMoreRef} className="h-16" />
         </div>
       </div>
