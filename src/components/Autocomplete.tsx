@@ -39,7 +39,7 @@ export const AutoComplete = ({
   onSearch,
 }: AutoCompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { searchInput, setSearchInput } = useFiltersStore();
+  const { searchInput, setSearchInput, setSearchQuery } = useFiltersStore();
   const [isOpen, setOpen] = useState(false);
 
   const debouncedQuery = useRef(
@@ -75,6 +75,7 @@ export const AutoComplete = ({
         if (optionToSelect) {
           onSelect?.(optionToSelect);
         } else {
+          setSearchQuery(input.value);
           onSearch?.(input.value);
         }
       }
@@ -83,7 +84,7 @@ export const AutoComplete = ({
         input.blur();
       }
     },
-    [isOpen, options, onSelect, onSearch]
+    [isOpen, options, onSelect, onSearch, setSearchQuery]
   );
 
   const handleBlur = () => {
@@ -93,6 +94,7 @@ export const AutoComplete = ({
   const handleSelectOption = useCallback(
     (selectedOption: Option) => {
       setSearchInput(selectedOption.label);
+      setSearchQuery(selectedOption.label);
       onSelect?.(selectedOption);
 
       // This is a hack to prevent the input from being focused after the user selects an option
@@ -101,13 +103,14 @@ export const AutoComplete = ({
         inputRef?.current?.blur();
       }, 0);
     },
-    [onSelect, setSearchInput]
+    [onSelect, setSearchInput, setSearchQuery]
   );
 
   const handleClear = useCallback(() => {
     setSearchInput("");
+    setSearchQuery("");
     onSelect?.(undefined);
-  }, [onSelect, setSearchInput]);
+  }, [onSelect, setSearchInput, setSearchQuery]);
 
   return (
     <CommandPrimitive
@@ -115,7 +118,7 @@ export const AutoComplete = ({
       shouldFilter={false}
       className={cn("rounded-lg", className)}
     >
-      <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md">
+      <div className="relative [&_[cmdk-input-wrapper]]:border-none border rounded-md box-border">
         <CommandInput
           ref={inputRef}
           value={searchInput}
@@ -124,7 +127,7 @@ export const AutoComplete = ({
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
           disabled={disabled}
-          className="text-base pr-9 h-8"
+          className="text-base pr-9 !h-[30px]"
         />
         {searchInput && searchInput?.length > 0 && (
           <Button
@@ -137,10 +140,10 @@ export const AutoComplete = ({
           </Button>
         )}
       </div>
-      <div className="relative mt-1">
+      <div className="relative">
         <div
           className={cn(
-            "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
+            "animate-in fade-in-0 zoom-in-95 absolute top-1 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
             isOpen ? "block" : "hidden"
           )}
         >
