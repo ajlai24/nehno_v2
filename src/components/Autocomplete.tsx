@@ -68,7 +68,7 @@ export const AutoComplete = ({
         setOpen(true);
       }
 
-      if (event.key === "Enter" && input.value !== "") {
+      if (event.key === "Enter") {
         const optionToSelect = options.find(
           (option) => option.label === input.value
         );
