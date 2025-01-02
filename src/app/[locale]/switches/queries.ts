@@ -32,12 +32,43 @@ export const fetchSwitches = async ({
   queryType = "all",
   selectedFilters,
   searchQuery,
+  forceMin = 0,
+  forceMax = 100,
 }: {
   pageParam?: number;
   queryType?: "filtered" | "search" | "all";
   selectedFilters?: SelectedFilters;
   searchQuery?: string;
+  forceMin?: number;
+  forceMax?: number;
 }) => {
+  // Determine the correct offset range based on total count and requested page
+  let offsetStart = pageParam * ITEMS_PER_PAGE;
+  let offsetEnd = (pageParam + 1) * ITEMS_PER_PAGE - 1;
+
+  // Fetch total count first, if possible, to prevent over-requesting
+  const { data: totalData, error: countError } = await supabase
+    .from("switches")
+    .select("id", { count: "exact" })
+    .gte("force", forceMin)
+    .lte("force", forceMax);
+
+  if (countError) {
+    throw new Error("Error fetching total count");
+  }
+
+  const totalCount = totalData?.length || 0;
+
+  // Check if the requested range exceeds the available data
+  if (offsetStart >= totalCount) {
+    offsetStart = totalCount - 1; // If the offset exceeds the total, set it to the last row.
+    offsetEnd = totalCount - 1; // End at the last available row.
+  }
+
+  if (offsetEnd >= totalCount) {
+    offsetEnd = totalCount - 1; // Ensure the end does not exceed the total count.
+  }
+
   // Apply search if queryType is "search"
   if (queryType === "search" && searchQuery) {
     const { data: switches, error } = await supabase.rpc("search_switches", {
@@ -50,7 +81,6 @@ export const fetchSwitches = async ({
       throw new Error("Error fetching search results");
     }
 
-    const totalCount = switches?.[0]?.total_count || 0;
     const totalPages = totalCount ? Math.ceil(totalCount / ITEMS_PER_PAGE) : 0;
 
     return { switches, totalPages, totalCount };
@@ -60,17 +90,21 @@ export const fetchSwitches = async ({
   let query = supabase
     .from("switches")
     .select("*", { count: "exact" })
-    .range(pageParam * ITEMS_PER_PAGE, (pageParam + 1) * ITEMS_PER_PAGE - 1);
+    .range(offsetStart, offsetEnd)
+    .gte("force", forceMin)
+    .lte("force", forceMax);
 
   // Apply filters if provided
-  if (queryType === "filtered" && selectedFilters) {
-    for (const group in selectedFilters) {
-      const activeFilters = Object.keys(selectedFilters[group]).filter(
-        (filter) => selectedFilters[group][filter]
-      );
+  if (queryType === "filtered") {
+    if (selectedFilters) {
+      for (const group in selectedFilters) {
+        const activeFilters = Object.keys(selectedFilters[group]).filter(
+          (filter) => selectedFilters[group][filter]
+        );
 
-      if (activeFilters.length > 0) {
-        query = query.in(group, activeFilters);
+        if (activeFilters.length > 0) {
+          query = query.in(group, activeFilters);
+        }
       }
     }
   }

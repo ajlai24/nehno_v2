@@ -10,6 +10,14 @@ interface FilterStore {
   setSearchInput: (input: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  inputMin: string;
+  setInputMin: (value: string) => void;
+  inputMax: string;
+  setInputMax: (value: string) => void;
+  forceMin: number;
+  setForceMin: (value: number) => void;
+  forceMax: number;
+  setForceMax: (value: number) => void;
 }
 
 export const useFiltersStore = create<FilterStore>((set) => ({
@@ -24,9 +32,24 @@ export const useFiltersStore = create<FilterStore>((set) => ({
       newFilters[group][filter] = !newFilters[group][filter];
       return { selectedFilters: newFilters };
     }),
-  resetFilters: () => set({ selectedFilters: {} }),
+  resetFilters: () =>
+    set({
+      selectedFilters: {},
+      forceMin: 0,
+      forceMax: 100,
+      inputMin: "0",
+      inputMax: "100",
+    }),
   searchInput: "",
   setSearchInput: (input) => set({ searchInput: input }),
   searchQuery: "",
   setSearchQuery: (query) => set({ searchQuery: query }),
+  forceMin: 0,
+  setForceMin: (value) => set({ forceMin: value }),
+  forceMax: 100,
+  setForceMax: (value) => set({ forceMax: value }),
+  inputMin: "0",
+  setInputMax: (value) => set({ inputMax: value }),
+  inputMax: "100",
+  setInputMin: (value) => set({ inputMin: value }),
 }));
