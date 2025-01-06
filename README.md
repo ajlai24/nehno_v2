@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ajlai24/nehno_v2)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/ajlai24/nehno_v2/main)
+![GitHub top language](https://img.shields.io/github/languages/top/ajlai24/nehno_v2)
+
+This is an example repository using Next.js, Tailwind, shadcn/ui, Typescript, Sanity.io, and Supabase that was deployed with Vercel. Feel free to take a look around!
 
 ## Getting Started
 
