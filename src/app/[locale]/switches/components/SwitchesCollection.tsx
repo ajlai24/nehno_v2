@@ -20,6 +20,7 @@ import { fetchSwitches } from "../queries";
 import { FilterPanel } from "./FilterPanel";
 import { SwitchCollectionContent } from "./SwitchCollectionContent";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
+import { SwitchSort } from "./SwitchSort";
 
 export default function SwitchesCollection({
   filters,
@@ -41,6 +42,7 @@ export default function SwitchesCollection({
     selectedFilters,
     forceMin,
     forceMax,
+    selectedSortValue,
   } = useFiltersStore();
 
   const { searchSuggestions, loadingSuggestions, handleQueryChange } =
@@ -61,6 +63,7 @@ export default function SwitchesCollection({
       searchQuery,
       forceMin,
       forceMax,
+      selectedSortValue,
     ],
     queryFn: ({ pageParam = 0 }) => {
       return fetchSwitches({
@@ -70,6 +73,7 @@ export default function SwitchesCollection({
         searchQuery,
         forceMin,
         forceMax,
+        selectedSortValue,
       });
     },
     initialPageParam: 0,
@@ -148,29 +152,14 @@ export default function SwitchesCollection({
           <div className="text-neutral-500 text-sm">(Work in progress)</div>
         </div>
 
-        <AutoComplete
-          className="hidden lg:block"
-          options={searchSuggestions}
-          emptyMessage="No results."
-          placeholder="Search..."
-          isLoading={loadingSuggestions}
-          onQueryChange={handleQueryChange}
-          onSelect={handleSelect}
-          onSearch={handleSearch}
-        />
-      </div>
-
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <div className="my-2 flex items-center gap-2 justify-between lg:hidden">
-          <DrawerTrigger className="lg:hidden" asChild>
-            <Button className="h-8" size="sm" variant="outline">
-              <Icons.filter className="h-5 w-5" />
-              <span>Filter</span>
-            </Button>
-          </DrawerTrigger>
-
+        <div className="flex gap-2 items-center">
+          <div className="pl-4 hidden lg:flex justify-end">
+            <div className="">
+              <SwitchSort />
+            </div>
+          </div>
           <AutoComplete
-            className="block lg:hidden"
+            className="hidden lg:block"
             options={searchSuggestions}
             emptyMessage="No results."
             placeholder="Search..."
@@ -180,6 +169,29 @@ export default function SwitchesCollection({
             onSearch={handleSearch}
           />
         </div>
+      </div>
+
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <div className="my-2 flex items-center gap-2 lg:hidden">
+          <DrawerTrigger className="lg:hidden" asChild>
+            <Button variant="outline">
+              <Icons.filter className="h-5 w-5" />
+              <span>Filter</span>
+            </Button>
+          </DrawerTrigger>
+
+          <SwitchSort />
+        </div>
+        <AutoComplete
+          className="block lg:hidden mb-2"
+          options={searchSuggestions}
+          emptyMessage="No results."
+          placeholder="Search..."
+          isLoading={loadingSuggestions}
+          onQueryChange={handleQueryChange}
+          onSelect={handleSelect}
+          onSearch={handleSearch}
+        />
 
         <DrawerTitle className="hidden">Filters</DrawerTitle>
         <DrawerContent>
@@ -201,7 +213,6 @@ export default function SwitchesCollection({
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
         />
-
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
           <div
             className={`lg:p-4 lg:pr-0 w-full ${isLoading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}

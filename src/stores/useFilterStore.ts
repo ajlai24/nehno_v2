@@ -18,6 +18,8 @@ interface FilterStore {
   setForceMin: (value: number) => void;
   forceMax: number;
   setForceMax: (value: number) => void;
+  selectedSortValue: string;
+  setSelectedSortValue: (value: string) => void;
 }
 
 export const useFiltersStore = create<FilterStore>((set) => ({
@@ -52,4 +54,6 @@ export const useFiltersStore = create<FilterStore>((set) => ({
   setInputMax: (value) => set({ inputMax: value }),
   inputMax: "100",
   setInputMin: (value) => set({ inputMin: value }),
+  selectedSortValue: "name_asc",
+  setSelectedSortValue: (value) => set({ selectedSortValue: value }),
 }));
