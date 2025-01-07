@@ -34,6 +34,7 @@ export const fetchSwitches = async ({
   searchQuery,
   forceMin = 0,
   forceMax = 100,
+  selectedSortValue,
 }: {
   pageParam?: number;
   queryType?: "filtered" | "search" | "all";
@@ -41,6 +42,7 @@ export const fetchSwitches = async ({
   searchQuery?: string;
   forceMin?: number;
   forceMax?: number;
+  selectedSortValue: string;
 }) => {
   // Determine the correct offset range based on total count and requested page
   let offsetStart = pageParam * ITEMS_PER_PAGE;
@@ -69,6 +71,32 @@ export const fetchSwitches = async ({
     offsetEnd = totalCount - 1; // Ensure the end does not exceed the total count.
   }
 
+  // Sort options
+  let sortColumn = "full_name";
+  let sortOrder = "asc";
+
+  switch (selectedSortValue) {
+    case "name_asc":
+      sortColumn = "full_name";
+      sortOrder = "asc";
+      break;
+    case "name_desc":
+      sortColumn = "full_name";
+      sortOrder = "desc";
+      break;
+    case "force_asc":
+      sortColumn = "force";
+      sortOrder = "asc";
+      break;
+    case "force_desc":
+      sortColumn = "force";
+      sortOrder = "desc";
+      break;
+    default:
+      sortColumn = "full_name";
+      sortOrder = "asc";
+  }
+
   // Apply search if queryType is "search"
   if (queryType === "search" && searchQuery) {
     const { data: switches, error } = await supabase.rpc("search_switches", {
@@ -92,7 +120,8 @@ export const fetchSwitches = async ({
     .select("*", { count: "exact" })
     .range(offsetStart, offsetEnd)
     .gte("force", forceMin)
-    .lte("force", forceMax);
+    .lte("force", forceMax)
+    .order(sortColumn, { ascending: sortOrder === "asc" });
 
   // Apply filters if provided
   if (queryType === "filtered") {

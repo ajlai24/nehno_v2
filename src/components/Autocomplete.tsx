@@ -127,7 +127,7 @@ export const AutoComplete = ({
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
           disabled={disabled}
-          className="text-base pr-9 !h-[30px]"
+          className="text-base pr-9 !h-[34px]"
         />
         {searchInput && searchInput?.length > 0 && (
           <Button
