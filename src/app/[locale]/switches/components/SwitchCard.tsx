@@ -1,6 +1,6 @@
 "use client";
 
-import { SanityImage } from "@/components/SanityImage";
+import { SwitchImage } from "@/app/[locale]/switches/components/SwitchImage";
 import {
   Card,
   CardContent,
@@ -25,7 +25,7 @@ export function SwitchCard({ details, onClick }: SwitchCardProps) {
     <Card className="h-full cursor-pointer" onClick={onClick}>
       <CardHeader className="p-4 pb-0">
         <div className="flex justify-center">
-          <SanityImage sanitySrc={image_src} alt={fullName} />
+          <SwitchImage src={image_src} alt={fullName} />
         </div>
 
         <CardTitle className="pt-4">{fullName}</CardTitle>
