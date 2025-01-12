@@ -1,6 +1,5 @@
 "use client";
 
-import { SanityImage } from "@/components/SanityImage";
 import {
   DialogContent,
   DialogHeader,
