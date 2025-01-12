@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Tables } from "@/utils/supabase/supabase.types";
 import { SwitchDetailsTable } from "./SwitchDetailsTable";
+import { SwitchImage } from "./SwitchImage";
 
 interface SwitchDetailsContentProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -39,7 +40,7 @@ export function SwitchDetailsContent({
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
-      <SanityImage sanitySrc={image_src} alt={title} />
+      <SwitchImage src={image_src} alt={title} />
       <SwitchDetailsTable details={details} />
     </DialogContent>
   );
