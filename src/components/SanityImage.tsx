@@ -1,6 +1,7 @@
 import { urlFor } from "@/utils/utils";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import Image, { ImageProps } from "next/image";
+import { Skeleton } from "./ui/skeleton";
 
 interface SanityImageProps extends Omit<ImageProps, "src"> {
   sanitySrc?: string | SanityImageSource | null;
@@ -24,7 +25,11 @@ export function SanityImage({
     : undefined;
 
   if (!imageUrl) {
-    return null;
+    return (
+      <div className="flex flex-col space-y-3">
+        <Skeleton className="h-[250px] w-[250px] rounded-xl animate-none" />
+      </div>
+    );
   }
 
   return (
