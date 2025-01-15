@@ -15,6 +15,7 @@ export function Navigation() {
     { label: "Home", route: "/" },
     { label: "Blog", route: "/blog" },
     { label: "Switches", route: "/switches" },
+    { label: "Chat", route: "/chat" },
   ];
 
   const activeTab =
