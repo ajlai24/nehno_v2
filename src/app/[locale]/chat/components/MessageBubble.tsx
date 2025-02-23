@@ -15,8 +15,8 @@ export function MessageBubble({
   return (
     <div className={cn("flex", { "justify-end": isUser })}>
       <div
-        className={cn("message my-3", {
-          "dark:bg-neutral-500 bg-neutral-300 px-5 py-2 rounded-xl": isUser,
+        className={cn("message my-3 px-5 py-2 rounded-xl", {
+          "dark:bg-neutral-500 bg-neutral-300": isUser,
         })}
       >
         <div className="flex gap-3">
