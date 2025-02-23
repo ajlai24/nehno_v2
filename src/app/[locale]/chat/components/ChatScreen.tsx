@@ -41,8 +41,8 @@ export function ChatScreen() {
         Chat with my assistant (in development)
       </h2>
       <div className="text-center text-xs text-neutral-500 pb-2">
-        Currently utilizing Claude 3.5 Sonnet via OpenRouter, integrated with
-        LangChain and Vercel AI
+        Currently utilizing dolphin3.0-r1-mistral-24b via OpenRouter with Vercel
+        AI
       </div>
       <div>
         {messages.map(({ id, role, content }) => (

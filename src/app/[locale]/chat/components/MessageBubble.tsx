@@ -25,7 +25,7 @@ export function MessageBubble({
               <VscRobot />
             </div>
           )}
-          <p>{content}</p>
+          <p className="whitespace-pre-wrap">{content}</p>
         </div>
       </div>
     </div>
