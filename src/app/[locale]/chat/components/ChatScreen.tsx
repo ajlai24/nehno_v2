@@ -51,7 +51,8 @@ export function ChatScreen() {
         Chat with my assistant (in development)
       </h2>
       <div className="text-center text-xs text-neutral-500 pb-2">
-        Currently utilizing gemini-2.0-flash-lite via OpenRouter with Vercel AI
+        Currently utilizing gemini-flash-1.5-8b-exp via OpenRouter with Vercel
+        AI
       </div>
       <div>
         {messages.map(({ id, role, content }) => (
