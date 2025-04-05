@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+          model: "google/gemini-flash-1.5-8b-exp",
           messages: formattedMessages,
         }),
       }

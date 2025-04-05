@@ -2,14 +2,15 @@
 
 import CenteredLoader from "@/components/CenteredLoader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useChat } from "ai/react";
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 import { MessageBubble } from "./MessageBubble";
+import { Textarea } from "@/components/ui/textarea";
 
 const CHAT_ENDPOINT = "/api/chat";
 
 export function ChatScreen() {
+  const sendButtonRef = useRef<HTMLButtonElement | null>(null);
   const {
     messages,
     input,
@@ -23,6 +24,15 @@ export function ChatScreen() {
       console.error("Error:", e);
     },
   });
+
+  useEffect(() => {
+    if (sendButtonRef.current) {
+      sendButtonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [messages]);
 
   async function sendMessage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,7 +51,7 @@ export function ChatScreen() {
         Chat with my assistant (in development)
       </h2>
       <div className="text-center text-xs text-neutral-500 pb-2">
-        Currently utilizing dolphin3.0-r1-mistral-24b via OpenRouter with Vercel
+        Currently utilizing gemini-flash-1.5-8b-exp via OpenRouter with Vercel
         AI
       </div>
       <div>
@@ -54,17 +64,28 @@ export function ChatScreen() {
           <CenteredLoader />
         </div>
       )}
-      <form onSubmit={sendMessage} className="flex gap-2">
-        <Input
-          type="text"
+      <form onSubmit={sendMessage} className="">
+        <Textarea
           value={input}
-          onChange={handleInputChange}
           placeholder="Type your message"
-          className="mb-2 p-2"
+          onChange={handleInputChange}
+          className="my-2 p-2"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
         />
-        <Button disabled={chatEndpointIsLoading} type="submit">
-          <span>Send</span>
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            ref={sendButtonRef}
+            disabled={chatEndpointIsLoading}
+            type="submit"
+          >
+            <span>Send</span>
+          </Button>
+        </div>
       </form>
     </div>
   );
