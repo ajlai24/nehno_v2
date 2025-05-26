@@ -47,10 +47,10 @@ export function ChatScreen() {
 
   return (
     <div>
-      <h2 className="text-lg text-center">
+      <h2 className="text-lg font-bold text-center">
         Chat with my assistant (in development)
       </h2>
-      <div className="text-center text-xs text-neutral-500 pb-2">
+      <div className="text-center text-sm text-neutral-500 pb-2">
         Currently utilizing gemini-flash-1.5-8b-exp via OpenRouter with Vercel
         AI
       </div>

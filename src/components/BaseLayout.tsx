@@ -7,19 +7,14 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import localFont from "next/font/local";
+import { Geist } from "next/font/google";
 import Link from "next/link";
 import { ReactNode, Suspense } from "react";
 
-const geistSans = localFont({
-  src: "../app/fonts/GeistVF.woff",
+const geist = Geist({
+  subsets: ["latin"],
+  display: "swap",
   variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "../app/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
 });
 
 type Props = {
@@ -33,10 +28,8 @@ export default async function BaseLayout({ children, locale }: Props) {
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="scroll-smooth">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen text-black dark:text-white`}
-      >
+    <html lang={locale} className={`scroll-smooth ${geist.variable}`}>
+      <body className="antialiased min-h-screen text-black dark:text-white scroll-smooth">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
