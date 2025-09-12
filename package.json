@@ -34,7 +34,7 @@
     "@tanstack/react-query": "^5.62.11",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
-    "ai": "^4.0.36",
+    "ai": "^5.0.43",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
