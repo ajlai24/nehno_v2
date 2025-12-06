@@ -128,7 +128,14 @@ export default async function Home() {
         <h3 className="flex text-2xl lg:text-3xl px-4">Experience</h3>
         <div className="mt-8">
           <ExperienceCard
-            dateRange="Sep 2022 – Present"
+            dateRange="Jun 2025 – Present"
+            title="Staff Engineer · Orkes"
+            body="Working on the orchestration software developer experience (DX) to simplify and streamline the process for developers to design, manage, and scale complex workflows."
+            badges={["React", "Typescript", "Vite", "PostgreSQL", "Java"]}
+            url="https://www.orkes.io/"
+          />
+          <ExperienceCard
+            dateRange="Sep 2022 – Jun 2025"
             title="Founding Engineer · Matchday, Inc."
             body="One of the first two founding engineers in establishing and building the core product and technical infrastructure of the company. My primary focus was developing the company's flagship website, which featured a mini-game and a marketplace that supported both fiat currency and USDC transactions on the Solana blockchain. Over time, my responsibilities expanded to encompass the entire tech stack, including the platform backend, AI integrations, and the game backend, which was built using Rust."
             badges={[

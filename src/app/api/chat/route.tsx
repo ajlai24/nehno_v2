@@ -6,6 +6,8 @@ const OPENROUTER_BASE_URL =
   process.env.OPENROUTER_BASE_URL || "https://openrouter.ai";
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
+export const AI_MODEL = "google/gemma-3-27b-it:free";
+
 type Message = {
   role: string;
   content: string;
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-flash-1.5-8b-exp",
+          model: AI_MODEL,
           messages: formattedMessages,
         }),
       }
