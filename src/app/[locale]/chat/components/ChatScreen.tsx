@@ -6,6 +6,7 @@ import { useChat } from "ai/react";
 import { FormEvent, useEffect, useRef } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { Textarea } from "@/components/ui/textarea";
+import { AI_MODEL } from "@/app/api/chat/route";
 
 const CHAT_ENDPOINT = "/api/chat";
 
@@ -51,8 +52,7 @@ export function ChatScreen() {
         Chat with my assistant (in development)
       </h2>
       <div className="text-center text-sm text-neutral-500 pb-2">
-        Currently utilizing gemini-flash-1.5-8b-exp via OpenRouter with Vercel
-        AI
+        Currently utilizing {AI_MODEL} via OpenRouter with Vercel AI
       </div>
       <div>
         {messages.map(({ id, role, content }) => (
