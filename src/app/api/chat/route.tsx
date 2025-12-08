@@ -6,7 +6,7 @@ const OPENROUTER_BASE_URL =
   process.env.OPENROUTER_BASE_URL || "https://openrouter.ai";
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-export const AI_MODEL = "google/gemma-3-27b-it:free";
+export const AI_MODEL = "openai/gpt-oss-20b:free";
 
 type Message = {
   role: string;
