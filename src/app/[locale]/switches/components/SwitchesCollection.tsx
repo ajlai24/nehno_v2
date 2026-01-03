@@ -16,7 +16,6 @@ import { Tables } from "@/utils/supabase/supabase.types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { fetchSwitches } from "../queries";
 import { FilterPanel } from "./FilterPanel";
 import { SwitchCollectionContent } from "./SwitchCollectionContent";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
@@ -65,16 +64,28 @@ export default function SwitchesCollection({
       forceMax,
       selectedSortValue,
     ],
-    queryFn: ({ pageParam = 0 }) => {
-      return fetchSwitches({
-        pageParam,
-        queryType,
-        selectedFilters,
-        searchQuery,
-        forceMin,
-        forceMax,
-        selectedSortValue,
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await fetch("/api/switches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pageParam,
+          queryType,
+          selectedFilters,
+          searchQuery,
+          forceMin,
+          forceMax,
+          selectedSortValue,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch switches");
+      }
+
+      return response.json();
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
