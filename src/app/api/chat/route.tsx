@@ -24,7 +24,7 @@ const formatMessage = (message: Message) => {
   };
 };
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const messages = body.messages ?? [];
