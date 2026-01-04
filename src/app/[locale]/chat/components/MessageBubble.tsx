@@ -34,6 +34,7 @@ export function MessageBubble({
                 </p>
               );
             }
+            return null;
           })}
         </div>
       </div>
