@@ -1,16 +1,17 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Message } from "ai/react";
+import { UIMessage } from "ai";
 import { VscRobot } from "react-icons/vsc";
 
 export function MessageBubble({
   role,
-  content,
+  parts,
 }: {
-  role: Message["role"];
-  content: string;
+  role: UIMessage["role"];
+  parts: UIMessage["parts"];
 }) {
+  console.log(parts)
   const isUser = role === "user";
   return (
     <div className={cn("flex", { "justify-end": isUser })}>
@@ -25,9 +26,18 @@ export function MessageBubble({
               <VscRobot />
             </div>
           )}
-          <p className="whitespace-pre-wrap">{content}</p>
+          {parts?.map((part, index) => {
+            const { type } = part;
+            if (type === "text") {
+              return (
+                <p className="whitespace-pre-wrap" key={index}>
+                  {part.text}
+                </p>
+              );
+            }
+          })}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
