@@ -11,7 +11,6 @@ export function MessageBubble({
   role: UIMessage["role"];
   parts: UIMessage["parts"];
 }) {
-  console.log(parts)
   const isUser = role === "user";
   return (
     <div className={cn("flex", { "justify-end": isUser })}>
