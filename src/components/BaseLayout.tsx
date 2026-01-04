@@ -20,8 +20,6 @@ type Props = {
   locale: string;
 };
 
-const year = new Date().getFullYear();
-
 export default async function BaseLayout({ children, locale }: Props) {
   const messages = await getMessages();
 
@@ -39,7 +37,7 @@ export default async function BaseLayout({ children, locale }: Props) {
               <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
                 <Navigation />
                 <main className="flex-1 overflow-y-auto">
-                  <div className="container mx-auto min-h-[calc(100vh-57px)] pt-8 p-4 flex flex-col">
+                  <div className="container mx-auto min-h-[calc(100vh-57px)] md:min-h-[calc(100vh-80px)] pt-8 p-4 flex flex-col">
                     <Suspense fallback={<Loading />}>{children}</Suspense>
                     <SpeedInsights />
                     <Analytics />

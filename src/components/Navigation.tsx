@@ -25,14 +25,14 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
-      <div className="flex h-14 items-center px-4 gap-4">
+      <div className="flex h-14 md:h-20 items-center px-4 gap-4">
         <NavigationLink href="/">
-          <Icons.logo className="h-6 w-6" />
+          <Icons.logo className="h-6 w-6 md:h-10 md:w-10" />
         </NavigationLink>
         <Tabs className="mr-4" value={activeTab.label}>
-          <TabsList>
+          <TabsList className="md:h-12 md:gap-2">
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.route} value={tab.label} asChild>
+              <TabsTrigger key={tab.route} value={tab.label} asChild className="md:text-base md:py-2">
                 <NavigationLink href={tab.route}>{tab.label}</NavigationLink>
               </TabsTrigger>
             ))}
