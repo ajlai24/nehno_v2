@@ -12,6 +12,10 @@ export function MessageBubble({
   parts: UIMessage["parts"];
 }) {
   const isUser = role === "user";
+  const textContent = parts?.filter(p => p.type === 'text').map(p => p.text).join('');
+
+  if (!textContent && (!parts || parts.length === 0)) return null;
+
   return (
     <div className={cn("flex", { "justify-end": isUser })}>
       <div
@@ -25,17 +29,9 @@ export function MessageBubble({
               <VscRobot />
             </div>
           )}
-          {parts?.map((part, index) => {
-            const { type } = part;
-            if (type === "text") {
-              return (
-                <p className="whitespace-pre-wrap" key={index}>
-                  {part.text}
-                </p>
-              );
-            }
-            return null;
-          })}
+          <p className="whitespace-pre-wrap">
+            {textContent}
+          </p>
         </div>
       </div>
     </div >
