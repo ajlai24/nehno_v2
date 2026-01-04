@@ -111,7 +111,7 @@ export function ChatScreen() {
         )}
 
         <div ref={textAreaRef} className={cn("container min-[1800px]:max-w-[1536px] w-full text-white p-4", { "bottom-0 left-1/2 transform -translate-x-1/2 fixed": hasMessages })}>
-          <form onSubmit={submitMessage} className="dark:bg-neutral-900 bg-neutral-100 rounded-md p-4">
+          <form onSubmit={submitMessage} className="dark:bg-neutral-900 bg-neutral-100 rounded-md p-2 md:p-4">
             <Textarea
               value={input}
               placeholder="Type your message"
