@@ -14,7 +14,7 @@ import { useSwitches } from "@/hooks/use-switches";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { Tables } from "@/utils/supabase/supabase.types";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { FilterPanel } from "./FilterPanel";
 import { SwitchCollectionContent } from "./SwitchCollectionContent";
@@ -31,9 +31,10 @@ export default function SwitchesCollection({
   const [selectedSwitch, setSelectedSwitch] = useState<
     Tables<"switches"> | undefined
   >();
-  const [queryType, setQueryType] = useState<"filtered" | "search" | "all">(
-    "all"
-  );
+  // const [queryType, setQueryType] = useState<"filtered" | "search" | "all">(
+  //   "all"
+  // );
+
   const {
     searchQuery,
     setSearchQuery,
@@ -43,6 +44,20 @@ export default function SwitchesCollection({
     forceMax,
     selectedSortValue,
   } = useFiltersStore();
+
+  const queryType = useMemo<"search" | "filtered" | "all">(() => {
+    if (searchQuery) return "search";
+
+    if (
+      Object.keys(selectedFilters).length > 0 ||
+      forceMin !== undefined ||
+      forceMax !== undefined
+    ) {
+      return "filtered";
+    }
+
+    return "all";
+  }, [searchQuery, selectedFilters, forceMin, forceMax]);
 
   const { searchSuggestions, loadingSuggestions, handleQueryChange } =
     useSwitches();
@@ -107,48 +122,24 @@ export default function SwitchesCollection({
     },
   });
 
-  useEffect(() => {
-    if (searchQuery) {
-      setQueryType("search");
-    } else if (
-      Object.keys(selectedFilters).length > 0 ||
-      forceMin ||
-      forceMax
-    ) {
-      setQueryType("filtered");
-    } else {
-      setQueryType("all");
-    }
-  }, [selectedFilters, forceMin, forceMax, searchQuery]);
-
   const handleSelect = (selectedOption: Option | undefined) => {
     resetFilters();
     if (!selectedOption) {
-      setQueryType("all");
+      setSearchQuery("");
     } else {
       const { label } = selectedOption;
       setSearchQuery(label);
-      setQueryType("search");
     }
   };
 
   const handleSearch = (searchInput: string) => {
     resetFilters();
-    if (searchInput === "") {
-      setQueryType("all");
-      return;
-    }
     setSearchQuery(searchInput);
-    setQueryType("search");
-  };
-
-  const handleFilterChange = () => {
-    setQueryType("filtered");
   };
 
   const handleResetFilters = () => {
     resetFilters();
-    setQueryType("all");
+    setSearchQuery(""); // empty search + empty filters → queryType becomes "all"
   };
 
   const switches = data?.pages.flatMap((page) => page.switches) || [];
@@ -209,7 +200,6 @@ export default function SwitchesCollection({
           <div className="px-4">
             <FilterPanel
               filters={filters}
-              onFilterChange={handleFilterChange}
               onResetFilters={handleResetFilters}
               closeDrawer={() => setDrawerOpen(false)}
             />
@@ -221,7 +211,6 @@ export default function SwitchesCollection({
         <FilterPanel
           className="hidden lg:block"
           filters={filters}
-          onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
         />
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
