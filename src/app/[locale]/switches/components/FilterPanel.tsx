@@ -10,16 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useFiltersStore } from "@/stores/useFilterStore";
+import { parseNumeric } from "@/utils/parse-util";
 import debounce from "lodash.debounce";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { SliderRange } from "./SliderRange";
-import { parseNumeric } from "@/utils/parse-util";
 
 interface FilterPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   filters: Record<string, string[]> | Record<string, Record<string, number>>;
-  onFilterChange?: () => void;
   onResetFilters?: () => void;
   closeDrawer?: () => void;
 }
@@ -27,7 +26,6 @@ interface FilterPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 export function FilterPanel({
   className,
   filters,
-  onFilterChange,
   onResetFilters,
   closeDrawer,
 }: FilterPanelProps) {
@@ -49,7 +47,6 @@ export function FilterPanel({
     setForceMax,
   } = useFiltersStore();
 
-  // Effects
   useEffect(() => {
     if (
       filters?.force &&
@@ -64,13 +61,6 @@ export function FilterPanel({
     }
   }, [filters, setForceMin, setForceMax, setInputMin, setInputMax]);
 
-  useEffect(() => {
-    if (onFilterChange && Object.keys(selectedFilters).length > 0) {
-      onFilterChange();
-    }
-  }, [onFilterChange, selectedFilters, forceMin, forceMax]);
-
-  // Handlers
   const handleCheckboxChange = async (group: string, filter: string) => {
     setSearchInput("");
     setSearchQuery("");
@@ -122,22 +112,32 @@ export function FilterPanel({
     }
   };
 
-  // Debounced state updates for force min/max
-  const debouncedSetForceMin = useCallback(
-    debounce((value: number) => {
-      setForceMin(value);
-      setInputMin(value.toString());
-    }, 500),
-    []
-  );
+  function useDebouncedSetter<T>(setter: (value: T) => void, delay = 500) {
+    const debouncedSetter = useMemo(
+      () => debounce(setter, delay),
+      [setter, delay]
+    );
 
-  const debouncedSetForceMax = useCallback(
-    debounce((value: number) => {
-      setForceMax(value);
-      setInputMax(value.toString());
-    }, 500),
-    []
-  );
+    useEffect(() => {
+      return () => debouncedSetter.cancel();
+    }, [debouncedSetter]);
+
+    return debouncedSetter;
+  }
+
+  const setMax = useCallback((value: number) => {
+    setForceMax(value);
+    setInputMax(value.toString());
+  }, []);
+
+  const debouncedSetForceMax = useDebouncedSetter(setMax);
+
+  const setMin = useCallback((value: number) => {
+    setForceMin(value);
+    setInputMin(value.toString());
+  }, []);
+
+  const debouncedSetForceMin = useDebouncedSetter(setMin);
 
   // Derived states using parseNumeric for min/max inputs
   const numericInputMin = parseNumeric(inputMin);

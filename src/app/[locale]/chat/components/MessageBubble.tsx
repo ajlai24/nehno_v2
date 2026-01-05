@@ -12,7 +12,10 @@ export function MessageBubble({
   parts: UIMessage["parts"];
 }) {
   const isUser = role === "user";
-  const textContent = parts?.filter(p => p.type === 'text').map(p => p.text).join('');
+  const textContent = parts
+    ?.filter((p) => p.type === "text")
+    .map((p) => p.text)
+    .join("");
 
   if (!textContent && (!parts || parts.length === 0)) return null;
 
@@ -29,11 +32,9 @@ export function MessageBubble({
               <VscRobot />
             </div>
           )}
-          <p className="whitespace-pre-wrap">
-            {textContent}
-          </p>
+          <p className="whitespace-pre-wrap">{textContent}</p>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
