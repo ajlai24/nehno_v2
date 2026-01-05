@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useChat } from '@ai-sdk/react';
-import { differenceInHours } from 'date-fns';
+// import { differenceInHours } from 'date-fns';
 import { useEffect, useRef, useState } from "react";
 import { MessageBubble } from "./MessageBubble";
 
@@ -62,18 +62,18 @@ export function ChatScreen() {
 
   const hasMessages = messages.length > 0;
 
-  let rateLimitMessage
-  if (error?.message) {
-    const parsedError = JSON.parse(error.message);
-    const { rateLimit } = parsedError;
-    if (rateLimit) {
-      const rateLimitReset = new Date(rateLimit.reset);
-      const now = new Date();
+  // let rateLimitMessage
+  // if (error?.message) {
+  //   const parsedError = JSON.parse(error.message);
+  //   const { rateLimit } = parsedError;
+  //   if (rateLimit) {
+  //     const rateLimitReset = new Date(rateLimit.reset);
+  //     const now = new Date();
 
-      const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-      rateLimitMessage = `Too many chat requests have been attempted. Please try again ${formatter.format(differenceInHours(rateLimitReset, now), 'hour')}`;
-    }
-  }
+  //     const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  //     rateLimitMessage = `Too many chat requests have been attempted. Please try again ${formatter.format(differenceInHours(rateLimitReset, now), 'hour')}`;
+  //   }
+  // }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
@@ -99,7 +99,7 @@ export function ChatScreen() {
         {error &&
           <div className="flex justify-center p-4">
             <div className="bg-red-100 text-red-800 border-l-4 border-red-500 p-4 rounded-md">
-              {rateLimitMessage ? rateLimitMessage : `Sorry something went wrong. Please try again later!`}
+              Sorry something went wrong. Please try again later!
             </div>
           </div>
         }
