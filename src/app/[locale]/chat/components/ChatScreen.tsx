@@ -5,29 +5,24 @@ import CenteredLoader from "@/components/CenteredLoader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { useChat } from "ai/react";
-import { differenceInHours } from 'date-fns';
-import { FormEvent, useEffect, useRef } from "react";
+import { useChat } from '@ai-sdk/react';
+// import { differenceInHours } from 'date-fns';
+import { useEffect, useRef, useState } from "react";
 import { MessageBubble } from "./MessageBubble";
-
-const CHAT_ENDPOINT = "/api/chat";
 
 export function ChatScreen() {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const textAreaRef = useRef<HTMLDivElement | null>(null);
   const sendButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [input, setInput] = useState('');
   const {
     messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading: chatEndpointIsLoading,
-    error
+    sendMessage,
+    status,
+    error,
   } = useChat({
-    api: CHAT_ENDPOINT,
-    streamProtocol: "text",
-    onError: (e) => {
-      console.error("Error:", e);
+    onError: (error) => {
+      console.error(error)
     },
   });
 
@@ -44,16 +39,22 @@ export function ChatScreen() {
     }
   }, [input]);
 
-  async function sendMessage(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const isLoading = status === 'streaming' || status === 'submitted';
+
+  async function submitMessage(e?: React.FormEvent<HTMLFormElement> | React.KeyboardEvent) {
+    e?.preventDefault();
     if (!messages.length) {
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
-    if (chatEndpointIsLoading) {
+    if (!input.trim() || isLoading) {
       return;
     }
     try {
-      await handleSubmit(e);
+      sendMessage({
+        role: 'user',
+        parts: [{ type: 'text', text: input }],
+      });
+      setInput("");
     } catch (err) {
       console.error("Error sending message:", err);
     }
@@ -61,18 +62,22 @@ export function ChatScreen() {
 
   const hasMessages = messages.length > 0;
 
-  let rateLimitMessage
-  if (error?.message) {
-    const parsedError = JSON.parse(error.message);
-    const { rateLimit } = parsedError;
-    if (rateLimit) {
-      const rateLimitReset = new Date(rateLimit.reset);
-      const now = new Date();
+  // let rateLimitMessage
+  // if (error?.message) {
+  //   const parsedError = JSON.parse(error.message);
+  //   const { rateLimit } = parsedError;
+  //   if (rateLimit) {
+  //     const rateLimitReset = new Date(rateLimit.reset);
+  //     const now = new Date();
 
-      const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-      rateLimitMessage = `Too many chat requests have been attempted. Please try again ${formatter.format(differenceInHours(rateLimitReset, now), 'hour')}`;
-    }
-  }
+  //     const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  //     rateLimitMessage = `Too many chat requests have been attempted. Please try again ${formatter.format(differenceInHours(rateLimitReset, now), 'hour')}`;
+  //   }
+  // }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(event.target.value);
+  };
 
   return (
     <div ref={chatContainerRef} className={cn("chat flex flex-grow overflow-auto", { "items-center justify-center": !hasMessages })}>
@@ -87,26 +92,26 @@ export function ChatScreen() {
         </div>
         }
 
-        {messages.map(({ id, role, content }) => (
-          <MessageBubble key={id} role={role} content={content} />
+        {messages.map(({ id, role, parts }) => (
+          <MessageBubble key={id} role={role} parts={parts} />
         ))}
 
         {error &&
           <div className="flex justify-center p-4">
             <div className="bg-red-100 text-red-800 border-l-4 border-red-500 p-4 rounded-md">
-              {rateLimitMessage ? rateLimitMessage : `Sorry something went wrong. Please try again later!`}
+              Sorry something went wrong. Please try again later!
             </div>
           </div>
         }
 
-        {chatEndpointIsLoading && (
+        {isLoading && (
           <div className="my-2">
             <CenteredLoader />
           </div>
         )}
 
         <div ref={textAreaRef} className={cn("container min-[1800px]:max-w-[1536px] w-full text-white p-4", { "bottom-0 left-1/2 transform -translate-x-1/2 fixed": hasMessages })}>
-          <form onSubmit={sendMessage} className="dark:bg-neutral-900 bg-neutral-100 rounded-md p-4">
+          <form onSubmit={submitMessage} className="dark:bg-neutral-900 bg-neutral-100 rounded-md p-2 md:p-4">
             <Textarea
               value={input}
               placeholder="Type your message"
@@ -115,14 +120,14 @@ export function ChatScreen() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSubmit();
+                  submitMessage(e);
                 }
               }}
             />
             <div className="flex justify-end">
               <Button
                 ref={sendButtonRef}
-                disabled={chatEndpointIsLoading}
+                disabled={isLoading}
                 type="submit"
               >
                 <span>Send</span>

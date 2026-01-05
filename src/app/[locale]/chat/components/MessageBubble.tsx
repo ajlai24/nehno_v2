@@ -1,17 +1,21 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Message } from "ai/react";
+import { UIMessage } from "ai";
 import { VscRobot } from "react-icons/vsc";
 
 export function MessageBubble({
   role,
-  content,
+  parts,
 }: {
-  role: Message["role"];
-  content: string;
+  role: UIMessage["role"];
+  parts: UIMessage["parts"];
 }) {
   const isUser = role === "user";
+  const textContent = parts?.filter(p => p.type === 'text').map(p => p.text).join('');
+
+  if (!textContent && (!parts || parts.length === 0)) return null;
+
   return (
     <div className={cn("flex", { "justify-end": isUser })}>
       <div
@@ -25,9 +29,11 @@ export function MessageBubble({
               <VscRobot />
             </div>
           )}
-          <p className="whitespace-pre-wrap">{content}</p>
+          <p className="whitespace-pre-wrap">
+            {textContent}
+          </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
