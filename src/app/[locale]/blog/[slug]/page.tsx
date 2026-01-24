@@ -5,21 +5,45 @@ import { Badge } from "@/components/ui/badge";
 import { client } from "@/sanity/client";
 import { Category } from "@/sanity/sanity.types";
 import { urlFor } from "@/utils/utils";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import imageUrlBuilder from "@sanity/image-url";
 import {
   PortableText,
   PortableTextComponents,
   type SanityDocument,
 } from "next-sanity";
+import Image from "next/image";
 import { Refractor, registerLanguage } from "react-refractor";
 import js from "refractor/lang/javascript.js";
 import json from "refractor/lang/json";
 import typescript from "refractor/lang/typescript";
 import { DisqusComments } from "../components/DisqusComments";
 
-// Then register them
 registerLanguage(js);
 registerLanguage(typescript);
 registerLanguage(json);
+
+interface PortableTextImage {
+  asset?: {
+    _ref: string;
+    _type: "reference";
+  };
+  alt?: string;
+  _type: "image";
+  _key?: string;
+  hotspot?: {
+    x?: number;
+    y?: number;
+    height?: number;
+    width?: number;
+  };
+  crop?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+}
 
 const POST_QUERY = `
   *[_type == "post" && slug.current == $slug][0] {
@@ -51,6 +75,42 @@ const portableTextComponents: PortableTextComponents = {
     code: ({ value }) => (
       <Refractor language={value.language || "text"} value={value.code} />
     ),
+    image: ({ value }: { value: PortableTextImage }) => {
+      if (!value?.asset?._ref) return null;
+
+      const { projectId, dataset } = client.config();
+      if (!projectId || !dataset) return null;
+
+      const builder = imageUrlBuilder({ projectId, dataset });
+      const maxDisplayWidth = 1200;
+      const imageUrl = builder
+        .image(value as SanityImageSource)
+        .width(maxDisplayWidth)
+        .fit('max') // Prevents upscaling - image won't exceed its natural size
+        .auto('format')
+        .url();
+
+      if (!imageUrl) return null;
+
+      // For Next.js Image, we need width/height, but we'll use CSS to maintain aspect ratio
+      // Using a reasonable default that won't distort most images
+      const defaultAspectRatio = 16 / 9;
+      const defaultHeight = Math.round(maxDisplayWidth / defaultAspectRatio);
+
+      return (
+        <div className="w-full overflow-hidden rounded-xl" style={{ maxWidth: `${maxDisplayWidth}px` }}>
+          <Image
+            src={imageUrl}
+            alt={value.alt || "Image"}
+            width={maxDisplayWidth}
+            height={defaultHeight}
+            className="h-auto w-full object-contain mt-0"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+            style={{ height: 'auto', maxWidth: '100%' }}
+          />
+        </div>
+      );
+    },
   },
 };
 
