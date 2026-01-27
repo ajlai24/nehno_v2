@@ -55,9 +55,7 @@ const StoryblokBlogPosts = ({
                   </div>
                   <div>
                     {tag_list?.map((tag) => (
-                      <Badge key={tag} variant="outline">
-                        {tag}
-                      </Badge>
+                      <Badge key={tag}>{tag}</Badge>
                     ))}
                   </div>
                 </CardDescription>

@@ -25,8 +25,8 @@ export default function BlogPostDetail({ story }: { story: ISbStoryData }) {
   return (
     <article className="flex flex-col gap-4">
       <div className="pb-3">
-        <Link href="/blog" className="text-sm text-primary hover:underline">
-          ← Back to Posts
+        <Link href="/blog" className="text-primary hover:underline">
+          ← Back to posts
         </Link>
       </div>
 
@@ -57,9 +57,7 @@ export default function BlogPostDetail({ story }: { story: ISbStoryData }) {
 
         <div className="flex gap-2">
           {tag_list?.map((tag: string) => (
-            <Badge key={tag} variant="secondary">
-              {tag}
-            </Badge>
+            <Badge key={tag}>{tag}</Badge>
           ))}
         </div>
       </header>
