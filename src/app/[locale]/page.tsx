@@ -82,7 +82,7 @@ export default async function Home() {
               <span className="text-slate-500 font-bold">nehno</span>
               <span>?</span>
             </SectionTitle>
-            <div className="container flex pt-5 max-w-lg leading-[1.75rem]">
+            <div className="container flex pt-5 max-w-lg leading-[1.75rem] prose dark:prose-invert">
               My first son used to always yell &quot;nehno!&quot; at us while
               giggling and to this day we still don&apos;t know what he meant.
               It&apos;s easy enough for a toddler to say so here we are 😛
@@ -97,7 +97,7 @@ export default async function Home() {
             </SectionTitle>
 
             <div className="container pt-5 max-w-lg leading-[1.75rem]">
-              <p>
+              <p className="prose dark:prose-invert">
                 I&apos;m based in the San Francisco Bay Area, California, where
                 I live with my wife and two sons. While I have experience across
                 the full stack, my true passion lies in frontend development. I
@@ -114,7 +114,7 @@ export default async function Home() {
                   <AvatarFallback>Kumo</AvatarFallback>
                 </Avatar>
               </div>
-              <p>
+              <p className="prose dark:prose-invert">
                 We had a beloved Japanese Spitz named Kumo, with soft white fur
                 that made him look like a cloud. Sadly, he passed away at the
                 start of 2024, and we miss him deeply every day.
