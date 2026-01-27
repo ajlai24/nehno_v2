@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+
+    // Generated storyblok types
+    ".storyblok/types/**/*.d.ts",
   ]),
 ]);
 
