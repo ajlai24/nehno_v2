@@ -47,7 +47,7 @@ const StoryblokBlogPosts = ({
             <Card className="h-full hover:border-primary transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle>{name}</CardTitle>
-                <CardDescription className="flex justify-between pt-1">
+                <CardDescription className="flex justify-between pt-1 gap-3">
                   <div className="text-sm">
                     {first_published_at
                       ? new Date(first_published_at).toLocaleDateString()
