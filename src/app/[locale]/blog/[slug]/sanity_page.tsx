@@ -205,7 +205,7 @@ export default async function PostPage({
         )}
       </div>
 
-      <DisqusComments post={post} />
+      {/* <DisqusComments post={post} /> */}
     </div>
   );
 }

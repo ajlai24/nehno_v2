@@ -7,6 +7,7 @@ import { useStoryblokRichText } from "@storyblok/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { DisqusComments } from "./DisqusComments";
 
 export default function BlogPostDetail({ story }: { story: ISbStoryData }) {
   const { render } = useStoryblokRichText({
@@ -77,10 +78,11 @@ export default function BlogPostDetail({ story }: { story: ISbStoryData }) {
         </div>
       )}
 
-      {/* Render the Rich Text content */}
       <div className="prose lg:prose-lg dark:prose-invert max-w-none">
         {render(content.body)}
       </div>
+
+      <DisqusComments id={story.id} slug={story.slug} title={story.name} />
     </article>
   );
 }

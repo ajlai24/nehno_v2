@@ -1,10 +1,15 @@
 "use client";
 
 import { DiscussionEmbed } from "disqus-react";
-import { SanityDocument } from "next-sanity";
 import { useTheme } from "next-themes";
 
-export const DisqusComments = ({ post }: { post: SanityDocument }) => {
+interface DisqusCommentsProps {
+  slug: string;
+  id: string | number;
+  title: string;
+}
+
+export const DisqusComments = ({ slug, id, title }: DisqusCommentsProps) => {
   const { theme } = useTheme();
 
   return (
@@ -12,9 +17,9 @@ export const DisqusComments = ({ post }: { post: SanityDocument }) => {
       key={theme}
       shortname="nehno"
       config={{
-        url: `https://nehno.com/posts/${post.slug}`,
-        identifier: post.id,
-        title: post.title,
+        url: `https://nehno.com/blog/${slug}`,
+        identifier: String(id),
+        title: title,
       }}
     />
   );
