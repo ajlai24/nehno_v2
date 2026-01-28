@@ -6,12 +6,28 @@ import { type ISbStoryData } from "@storyblok/js";
 import { useStoryblokRichText } from "@storyblok/react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { DisqusComments } from "./DisqusComments";
 
 export default function BlogPostDetail({ story }: { story: ISbStoryData }) {
   const { render } = useStoryblokRichText({
-    resolvers: {},
+    resolvers: {
+      emoji: (props) => {
+        const emojiChar = props.attrs?.emoji;
+
+        if (props.type === "emoji" && emojiChar) {
+          return (
+            <span
+              role="img"
+              aria-label={props.attrs?.name || "emoji"}
+              className="inline-block"
+            >
+              {emojiChar}
+            </span>
+          );
+        }
+        return <>{props.children}</>;
+      },
+    },
   });
 
   if (!story || !story.content) return null;
