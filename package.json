@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.2",
     "@ai-sdk/react": "^3.0.6",
-    "@langchain/core": "^0.3.80",
+    "@langchain/core": "^1.1.19",
     "@langchain/langgraph": "^0.2.39",
     "@langchain/openai": "^0.3.17",
     "@openrouter/ai-sdk-provider": "^2.0.2",
