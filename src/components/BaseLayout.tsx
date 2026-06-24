@@ -26,9 +26,13 @@ export default async function BaseLayout({ children, locale }: Props) {
 
   return (
     <StoryblokProvider>
-      <html lang={locale} className={`scroll-smooth ${geist.variable}`}>
-        <NextIntlClientProvider messages={messages}>
-          <body className="antialiased min-h-screen text-black dark:text-white scroll-smooth">
+      <html
+        lang={locale}
+        suppressHydrationWarning
+        className={`scroll-smooth ${geist.variable}`}
+      >
+        <body className="antialiased min-h-screen text-black dark:text-white scroll-smooth">
+          <NextIntlClientProvider messages={messages}>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -50,8 +54,8 @@ export default async function BaseLayout({ children, locale }: Props) {
                 </div>
               </div>
             </ThemeProvider>
-          </body>
-        </NextIntlClientProvider>
+          </NextIntlClientProvider>
+        </body>
       </html>
     </StoryblokProvider>
   );
