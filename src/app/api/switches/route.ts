@@ -1,21 +1,25 @@
 import { ITEMS_PER_PAGE } from "@/utils/constants";
-import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
-        const body = await req.json();
-        const {
-            pageParam = 0,
-            queryType = "all",
-            selectedFilters,
-            searchQuery,
-            forceMin = 0,
-            forceMax = 100,
-            selectedSortValue,
-        } = body;
+        const searchParams = req.nextUrl.searchParams;
 
-        const supabase = await createClient();
+        const pageParam = Number(searchParams.get("page") ?? 0);
+        const queryType = searchParams.get("queryType") ?? "all";
+        const searchQuery = searchParams.get("searchQuery") ?? "";
+        const forceMin = Number(searchParams.get("forceMin") ?? 0);
+        const forceMax = Number(searchParams.get("forceMax") ?? 100);
+        const selectedSortValue =
+            searchParams.get("sort") ?? "name_asc";
+
+        // selectedFilters is JSON encoded
+        const selectedFilters = JSON.parse(
+            searchParams.get("filters") ?? "{}"
+        );
+
+        const supabase = supabaseAdmin;
 
         // Determine the correct offset range based on total count and requested page
         let offsetStart = pageParam * ITEMS_PER_PAGE;

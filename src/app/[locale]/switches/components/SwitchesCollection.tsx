@@ -80,22 +80,17 @@ export default function SwitchesCollection({
       selectedSortValue,
     ],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await fetch("/api/switches", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          pageParam,
-          queryType,
-          selectedFilters,
-          searchQuery,
-          forceMin,
-          forceMax,
-          selectedSortValue,
-        }),
+      const params = new URLSearchParams({
+        page: pageParam.toString(),
+        queryType,
+        searchQuery,
+        forceMin: forceMin.toString(),
+        forceMax: forceMax.toString(),
+        sort: selectedSortValue,
+        filters: JSON.stringify(selectedFilters),
       });
 
+      const response = await fetch(`/api/switches?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch switches");
       }
