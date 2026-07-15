@@ -16,7 +16,7 @@ import { Tables } from "@/utils/supabase/supabase.types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { FilterPanel } from "./FilterPanel";
+import { FilterPanel } from "./Filters/FilterPanel";
 import { SwitchCollectionContent } from "./SwitchCollectionContent";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
 import { SwitchSort } from "./SwitchSort";
@@ -31,33 +31,35 @@ export default function SwitchesCollection({
   const [selectedSwitch, setSelectedSwitch] = useState<
     Tables<"switches"> | undefined
   >();
-  // const [queryType, setQueryType] = useState<"filtered" | "search" | "all">(
-  //   "all"
-  // );
 
   const {
     searchQuery,
     setSearchQuery,
     resetFilters,
     selectedFilters,
-    forceMin,
-    forceMax,
+    rangeFilters,
     selectedSortValue,
   } = useFiltersStore();
 
   const queryType = useMemo<"search" | "filtered" | "all">(() => {
     if (searchQuery) return "search";
 
-    if (
-      Object.keys(selectedFilters).length > 0 ||
-      forceMin !== undefined ||
-      forceMax !== undefined
-    ) {
+    const hasSelectedFilters = Object.keys(selectedFilters).some((group) =>
+      Object.values(selectedFilters[group]).some(Boolean)
+    );
+
+    const hasRangeFilters = Object.values(rangeFilters).some(
+      (filter) =>
+        filter.min !== 0 ||
+        filter.max !== 100
+    );
+
+    if (hasSelectedFilters || hasRangeFilters) {
       return "filtered";
     }
 
     return "all";
-  }, [searchQuery, selectedFilters, forceMin, forceMax]);
+  }, [rangeFilters, searchQuery, selectedFilters]);
 
   const { searchSuggestions, loadingSuggestions, handleQueryChange } =
     useSwitches();
@@ -73,10 +75,9 @@ export default function SwitchesCollection({
     queryKey: [
       "switches",
       queryType,
+      rangeFilters,
       selectedFilters,
       searchQuery,
-      forceMin,
-      forceMax,
       selectedSortValue,
     ],
     queryFn: async ({ pageParam = 0 }) => {
@@ -84,8 +85,7 @@ export default function SwitchesCollection({
         page: pageParam.toString(),
         queryType,
         searchQuery,
-        forceMin: forceMin.toString(),
-        forceMax: forceMax.toString(),
+        rangeFilters: JSON.stringify(rangeFilters),
         sort: selectedSortValue,
         filters: JSON.stringify(selectedFilters),
       });
@@ -107,6 +107,8 @@ export default function SwitchesCollection({
       return lastPageParam === 0 ? undefined : lastPageParam - 1;
     },
   });
+
+  console.log(data)
 
   const { ref: loadMoreRef } = useInView({
     triggerOnce: false,
@@ -203,11 +205,14 @@ export default function SwitchesCollection({
       </Drawer>
 
       <div className="grid lg:grid-cols-5 grow">
-        <FilterPanel
-          className="hidden lg:block"
-          filters={filters}
-          onResetFilters={handleResetFilters}
-        />
+        <div className="space-y-4 py-4 pr-2">
+          <FilterPanel
+            className="hidden lg:block"
+            filters={filters}
+            onResetFilters={handleResetFilters}
+          />
+        </div>
+
         <div className="col-span-3 lg:col-span-4 lg:border-l h-full">
           <div
             className={`lg:p-4 lg:pr-0 w-full ${isLoading ? "h-full" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
