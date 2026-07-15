@@ -17,10 +17,11 @@ export const useSwitches = () => {
       const { brand, series, name } = switchDetails;
       const label = `${brand} ${series} ${name}`;
       return {
-        value: switchDetails.id,
+        value: String(switchDetails.id),
         label,
       };
     });
+
     setSearchSuggestions(suggestions || []);
     setLoadingSuggestions(false);
   };
