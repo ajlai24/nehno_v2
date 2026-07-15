@@ -28,8 +28,12 @@ export function SwitchSort() {
           <SelectLabel>Sort</SelectLabel>
           <SelectItem value="name_asc">Name: A-Z</SelectItem>
           <SelectItem value="name_desc">Name: Z-A</SelectItem>
-          <SelectItem value="force_desc">Actuation Force (gf): High to Low</SelectItem>
-          <SelectItem value="force_asc">Actuation Force (gf): Low to High</SelectItem>
+          <SelectItem value="force_desc">
+            Actuation Force (gf): High to Low
+          </SelectItem>
+          <SelectItem value="force_asc">
+            Actuation Force (gf): Low to High
+          </SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
