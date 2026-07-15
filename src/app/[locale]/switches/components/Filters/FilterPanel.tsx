@@ -8,14 +8,15 @@ import {
 } from "@/components/ui/accordion";
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { useTranslations } from "next-intl";
+import { SwitchFilters } from "../../types/filters";
 import { CheckboxFilters } from "./CheckboxFilters";
-import { FilterValues, isCheckboxFilter, isRangeFilter } from "./filter-utils";
+import { isCheckboxFilter, isRangeFilter } from "./filter-utils";
 import { FilterHeader } from "./FilterHeader";
 import { RangeFilters } from "./RangeFilters";
 
 interface FilterPanelProps {
   className?: string;
-  filters: Record<string, FilterValues>;
+  filters: SwitchFilters;
   onResetFilters?: () => void;
   closeDrawer?: () => void;
 }

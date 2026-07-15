@@ -1,9 +1,4 @@
-export type FilterValues =
-  | string[]
-  | {
-      min: number;
-      max: number;
-    };
+import { FilterValues } from "../../types/filters";
 
 export const isRangeFilter = (
   value: FilterValues,

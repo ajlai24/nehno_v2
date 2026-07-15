@@ -1,8 +1,9 @@
+import { SwitchFilters } from "../../types/filters";
 import { RangeFilter } from "./RangeFilter";
-import { FilterValues, isRangeFilter, rangeFilterConfig } from "./filter-utils";
+import { isRangeFilter, rangeFilterConfig } from "./filter-utils";
 
 interface RangeFilterProps {
-  filters: Record<string, FilterValues>;
+  filters: SwitchFilters;
 }
 export function RangeFilters({ filters }: RangeFilterProps) {
   return (
