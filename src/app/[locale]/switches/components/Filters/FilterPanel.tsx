@@ -9,11 +9,7 @@ import {
 import { useFiltersStore } from "@/stores/useFilterStore";
 import { useTranslations } from "next-intl";
 import { CheckboxFilters } from "./CheckboxFilters";
-import {
-  FilterValues,
-  isCheckboxFilter,
-  isRangeFilter,
-} from "./filter-utils";
+import { FilterValues, isCheckboxFilter, isRangeFilter } from "./filter-utils";
 import { FilterHeader } from "./FilterHeader";
 import { RangeFilters } from "./RangeFilters";
 
@@ -32,11 +28,7 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const t = useTranslations("Filters");
 
-  const {
-    resetFilters,
-    setSearchInput,
-    setSearchQuery,
-  } = useFiltersStore();
+  const { resetFilters, setSearchInput, setSearchQuery } = useFiltersStore();
 
   const handleReset = () => {
     resetFilters();
@@ -48,15 +40,11 @@ export function FilterPanel({
   const filterEntries = Object.entries(filters);
 
   const checkboxFilters = Object.fromEntries(
-    filterEntries.filter(([key]) =>
-      isCheckboxFilter(key)
-    )
+    filterEntries.filter(([key]) => isCheckboxFilter(key)),
   ) as Record<string, string[]>;
 
   const rangeFilters = Object.fromEntries(
-    filterEntries.filter(([_, value]) =>
-      isRangeFilter(value)
-    )
+    filterEntries.filter(([_, value]) => isRangeFilter(value)),
   ) as Record<
     string,
     {
@@ -67,9 +55,7 @@ export function FilterPanel({
 
   const accordionValues = [
     ...Object.keys(checkboxFilters),
-    ...(Object.keys(rangeFilters).length
-      ? ["ranges"]
-      : []),
+    ...(Object.keys(rangeFilters).length ? ["ranges"] : []),
   ];
 
   return (
@@ -80,40 +66,25 @@ export function FilterPanel({
         closeDrawer={closeDrawer}
       />
 
-      <Accordion
-        type="multiple"
-        defaultValue={accordionValues}
-      >
-        {Object.entries(checkboxFilters).map(
-          ([group, values]) => (
-            <AccordionItem
-              key={group}
-              value={group}
-            >
-              <AccordionTrigger className="font-semibold">
-                {t(group)}
-              </AccordionTrigger>
-
-              <AccordionContent>
-                <CheckboxFilters
-                  group={group}
-                  filters={values}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          )
-        )}
-
-        {Object.keys(rangeFilters).length > 0 && (
-          <AccordionItem value="ranges">
+      <Accordion type="multiple" defaultValue={accordionValues}>
+        {Object.entries(checkboxFilters).map(([group, values]) => (
+          <AccordionItem key={group} value={group}>
             <AccordionTrigger className="font-semibold">
-              Other
+              {t(group)}
             </AccordionTrigger>
 
             <AccordionContent>
-              <RangeFilters
-                filters={rangeFilters}
-              />
+              <CheckboxFilters group={group} filters={values} />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+
+        {Object.keys(rangeFilters).length > 0 && (
+          <AccordionItem value="ranges">
+            <AccordionTrigger className="font-semibold">Other</AccordionTrigger>
+
+            <AccordionContent>
+              <RangeFilters filters={rangeFilters} />
             </AccordionContent>
           </AccordionItem>
         )}

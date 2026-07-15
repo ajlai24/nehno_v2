@@ -51,7 +51,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div
         className={cn(
           "m-0 flex items-center justify-center rounded-md border border-input bg-transparent p-0 px-3 py-0 text-sm shadow-sm transition-colors focus-within:outline-none focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50 relative",
-          className
+          className,
         )}
       >
         {Icon && type !== "file" && iconBehavior === "prepend" && (
@@ -67,7 +67,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "flex h-9 w-full items-center justify-center bg-transparent file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-5",
             type !== "file" ? "py-1" : "py-1.5",
-            className
+            className,
           )}
           ref={ref}
           {...props}
@@ -90,7 +90,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 Input.displayName = "Input";
 

@@ -12,8 +12,7 @@ export function RangeFilters({ filters }: RangeFilterProps) {
           return null;
         }
 
-        const config =
-          rangeFilterConfig[key as keyof typeof rangeFilterConfig];
+        const config = rangeFilterConfig[key as keyof typeof rangeFilterConfig];
 
         return (
           <RangeFilter

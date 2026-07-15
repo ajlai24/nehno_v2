@@ -6,16 +6,9 @@ interface CheckboxFiltersProps {
   filters: string[];
 }
 
-export function CheckboxFilters({
-  group,
-  filters,
-}: CheckboxFiltersProps) {
-  const {
-    selectedFilters,
-    toggleFilter,
-    setSearchInput,
-    setSearchQuery,
-  } = useFiltersStore();
+export function CheckboxFilters({ group, filters }: CheckboxFiltersProps) {
+  const { selectedFilters, toggleFilter, setSearchInput, setSearchQuery } =
+    useFiltersStore();
 
   const handleChange = (filter: string) => {
     setSearchInput("");
@@ -26,19 +19,12 @@ export function CheckboxFilters({
   return (
     <>
       {filters.map((filter) => (
-        <div
-          key={filter}
-          className="flex items-center space-x-2 pb-2"
-        >
+        <div key={filter} className="flex items-center space-x-2 pb-2">
           <Checkbox
             className="w-6 h-6"
             id={`${group}-${filter}`}
-            checked={
-              selectedFilters[group]?.[filter] ?? false
-            }
-            onCheckedChange={() =>
-              handleChange(filter)
-            }
+            checked={selectedFilters[group]?.[filter] ?? false}
+            onCheckedChange={() => handleChange(filter)}
           />
 
           <label

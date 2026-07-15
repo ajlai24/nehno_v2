@@ -22,14 +22,9 @@ interface FilterStore {
   toggleFilter: (group: string, filter: string) => void;
 
   rangeFilters: Record<string, RangeFilter>;
-  
-  initializeRangeFilters: (
-    filters: FilterRangeConfig
-  ) => void;
-  setRangeFilter: (
-    name: string,
-    values: Partial<RangeFilter>
-  ) => void;
+
+  initializeRangeFilters: (filters: FilterRangeConfig) => void;
+  setRangeFilter: (name: string, values: Partial<RangeFilter>) => void;
 
   appliedRangeFilters: Record<string, RangeFilter>;
   applyRangeFilters: () => void;
@@ -47,7 +42,7 @@ interface FilterStore {
 }
 
 const emptyRangeFilters = (
-  ranges: FilterRangeConfig
+  ranges: FilterRangeConfig,
 ): Record<string, RangeFilter> => {
   return Object.fromEntries(
     Object.entries(ranges).map(([key, value]) => [
@@ -58,7 +53,7 @@ const emptyRangeFilters = (
         inputMin: String(value.min),
         inputMax: String(value.max),
       },
-    ])
+    ]),
   );
 };
 
@@ -71,8 +66,7 @@ export const useFiltersStore = create<FilterStore>((set) => ({
         ...state.selectedFilters,
         [group]: {
           ...state.selectedFilters[group],
-          [filter]:
-            !state.selectedFilters[group]?.[filter],
+          [filter]: !state.selectedFilters[group]?.[filter],
         },
       },
     })),
@@ -106,28 +100,23 @@ export const useFiltersStore = create<FilterStore>((set) => ({
       selectedFilters: {},
 
       rangeFilters: Object.fromEntries(
-        Object.entries(state.rangeFilters).map(
-          ([key, value]) => [
-            key,
-            {
-              ...value,
-              inputMin: String(value.min),
-              inputMax: String(value.max),
-            },
-          ]
-        )
+        Object.entries(state.rangeFilters).map(([key, value]) => [
+          key,
+          {
+            ...value,
+            inputMin: String(value.min),
+            inputMax: String(value.max),
+          },
+        ]),
       ),
     })),
 
   searchInput: "",
-  setSearchInput: (input) =>
-    set({ searchInput: input }),
+  setSearchInput: (input) => set({ searchInput: input }),
 
   searchQuery: "",
-  setSearchQuery: (query) =>
-    set({ searchQuery: query }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   selectedSortValue: "name_asc",
-  setSelectedSortValue: (value) =>
-    set({ selectedSortValue: value }),
+  setSelectedSortValue: (value) => set({ selectedSortValue: value }),
 }));

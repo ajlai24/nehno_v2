@@ -47,7 +47,7 @@ export function RangeFilter({
       debounce(() => {
         applyRangeFilters();
       }, 500),
-    [applyRangeFilters]
+    [applyRangeFilters],
   );
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function RangeFilter({
         inputMin: String(value),
       });
     },
-    [name, setRangeFilter]
+    [name, setRangeFilter],
   );
 
   const setMax = useCallback(
@@ -83,7 +83,7 @@ export function RangeFilter({
         inputMax: String(value),
       });
     },
-    [name, setRangeFilter]
+    [name, setRangeFilter],
   );
 
   const debouncedSetMin = useDebouncedSetter(setMin);
@@ -110,9 +110,7 @@ export function RangeFilter({
     debouncedRangeFilterApply();
   };
 
-  const handleMinChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     setRangeFilter(name, {
@@ -121,14 +119,10 @@ export function RangeFilter({
 
     const numericValue = parseNumeric(value);
 
-    debouncedSetMin(
-      Math.min(numericValue, filter.max)
-    );
+    debouncedSetMin(Math.min(numericValue, filter.max));
   };
 
-  const handleMaxChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     setRangeFilter(name, {
@@ -137,23 +131,19 @@ export function RangeFilter({
 
     const numericValue = parseNumeric(value);
 
-    debouncedSetMax(
-      Math.max(numericValue, filter.min)
-    );
+    debouncedSetMax(Math.max(numericValue, filter.min));
   };
 
   const handleKeyPress = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    type: "min" | "max"
+    type: "min" | "max",
   ) => {
     if (e.key !== "Enter") return;
 
     e.preventDefault();
 
     const value = parseNumeric(
-      type === "min"
-        ? filter.inputMin
-        : filter.inputMax
+      type === "min" ? filter.inputMin : filter.inputMax,
     );
 
     if (type === "min") {
@@ -184,10 +174,7 @@ export function RangeFilter({
       <div className="pr-2">
         <SliderRange
           value={sliderValue}
-          defaultValue={[
-            defaultMin,
-            defaultMax,
-          ]}
+          defaultValue={[defaultMin, defaultMax]}
           minStepsBetweenThumbs={1}
           min={min}
           max={max}
@@ -199,30 +186,22 @@ export function RangeFilter({
 
       <div className="flex justify-between gap-2 px-1">
         <div>
-          <label className="text-neutral-500">
-            Min
-          </label>
+          <label className="text-neutral-500">Min</label>
 
           <Input
             value={filter.inputMin}
             onChange={handleMinChange}
-            onKeyDown={(e) =>
-              handleKeyPress(e, "min")
-            }
+            onKeyDown={(e) => handleKeyPress(e, "min")}
           />
         </div>
 
         <div>
-          <label className="text-xs text-neutral-500">
-            Max
-          </label>
+          <label className="text-xs text-neutral-500">Max</label>
 
           <Input
             value={filter.inputMax}
             onChange={handleMaxChange}
-            onKeyDown={(e) =>
-              handleKeyPress(e, "max")
-            }
+            onKeyDown={(e) => handleKeyPress(e, "max")}
           />
         </div>
       </div>
@@ -230,13 +209,10 @@ export function RangeFilter({
   );
 }
 
-function useDebouncedSetter<T>(
-  setter: (value: T) => void,
-  delay = 500
-) {
+function useDebouncedSetter<T>(setter: (value: T) => void, delay = 500) {
   const debouncedSetter = useMemo(
     () => debounce(setter, delay),
-    [setter, delay]
+    [setter, delay],
   );
 
   useEffect(() => {
