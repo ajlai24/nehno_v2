@@ -2,58 +2,121 @@ import { create } from "zustand";
 
 export type SelectedFilters = Record<string, Record<string, boolean>>;
 
+export interface RangeFilter {
+  min: number;
+  max: number;
+  inputMin: string;
+  inputMax: string;
+}
+
+export type FilterRangeConfig = Record<
+  string,
+  {
+    min: number;
+    max: number;
+  }
+>;
+
 interface FilterStore {
   selectedFilters: SelectedFilters;
   toggleFilter: (group: string, filter: string) => void;
+
+  rangeFilters: Record<string, RangeFilter>;
+
+  initializeRangeFilters: (filters: FilterRangeConfig) => void;
+  setRangeFilter: (name: string, values: Partial<RangeFilter>) => void;
+
+  appliedRangeFilters: Record<string, RangeFilter>;
+  applyRangeFilters: () => void;
+
   resetFilters: () => void;
+
   searchInput: string;
   setSearchInput: (input: string) => void;
+
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  inputMin: string;
-  setInputMin: (value: string) => void;
-  inputMax: string;
-  setInputMax: (value: string) => void;
-  forceMin: number;
-  setForceMin: (value: number) => void;
-  forceMax: number;
-  setForceMax: (value: number) => void;
+
   selectedSortValue: string;
   setSelectedSortValue: (value: string) => void;
 }
 
+const emptyRangeFilters = (
+  ranges: FilterRangeConfig,
+): Record<string, RangeFilter> => {
+  return Object.fromEntries(
+    Object.entries(ranges).map(([key, value]) => [
+      key,
+      {
+        min: value.min,
+        max: value.max,
+        inputMin: String(value.min),
+        inputMax: String(value.max),
+      },
+    ]),
+  );
+};
+
 export const useFiltersStore = create<FilterStore>((set) => ({
   selectedFilters: {},
-  toggleFilter: (group, filter) =>
-    set((state) => {
-      const newFilters = { ...state.selectedFilters };
 
-      if (!newFilters[group]) {
-        newFilters[group] = {};
-      }
-      newFilters[group][filter] = !newFilters[group][filter];
-      return { selectedFilters: newFilters };
-    }),
-  resetFilters: () =>
+  toggleFilter: (group, filter) =>
+    set((state) => ({
+      selectedFilters: {
+        ...state.selectedFilters,
+        [group]: {
+          ...state.selectedFilters[group],
+          [filter]: !state.selectedFilters[group]?.[filter],
+        },
+      },
+    })),
+
+  rangeFilters: {},
+
+  initializeRangeFilters: (filters) =>
     set({
-      selectedFilters: {},
-      forceMin: 0,
-      forceMax: 100,
-      inputMin: "0",
-      inputMax: "100",
+      rangeFilters: emptyRangeFilters(filters),
     }),
+
+  setRangeFilter: (name, values) =>
+    set((state) => ({
+      rangeFilters: {
+        ...state.rangeFilters,
+        [name]: {
+          ...state.rangeFilters[name],
+          ...values,
+        },
+      },
+    })),
+
+  appliedRangeFilters: {},
+  applyRangeFilters: () =>
+    set((state) => ({
+      appliedRangeFilters: state.rangeFilters,
+    })),
+
+  resetFilters: () =>
+    set((state) => ({
+      selectedFilters: {},
+
+      rangeFilters: Object.fromEntries(
+        Object.entries(state.rangeFilters).map(([key, value]) => [
+          key,
+          {
+            ...value,
+            inputMin: String(value.min),
+            inputMax: String(value.max),
+          },
+        ]),
+      ),
+    })),
+
   searchInput: "",
   setSearchInput: (input) => set({ searchInput: input }),
+
   searchQuery: "",
   setSearchQuery: (query) => set({ searchQuery: query }),
-  forceMin: 0,
-  setForceMin: (value) => set({ forceMin: value }),
-  forceMax: 100,
-  setForceMax: (value) => set({ forceMax: value }),
-  inputMin: "0",
-  setInputMax: (value) => set({ inputMax: value }),
-  inputMax: "100",
-  setInputMin: (value) => set({ inputMin: value }),
+
   selectedSortValue: "name_asc",
   setSelectedSortValue: (value) => set({ selectedSortValue: value }),
 }));

@@ -47,7 +47,7 @@ export const AutoComplete = ({
       if (onQueryChange) {
         onQueryChange(query);
       }
-    }, 500)
+    }, 500),
   ).current;
 
   // Handle input changes and trigger debounced query
@@ -70,7 +70,7 @@ export const AutoComplete = ({
 
       if (event.key === "Enter") {
         const optionToSelect = options.find(
-          (option) => option.label === input.value
+          (option) => option.label === input.value,
         );
         if (optionToSelect) {
           onSelect?.(optionToSelect);
@@ -84,7 +84,7 @@ export const AutoComplete = ({
         input.blur();
       }
     },
-    [isOpen, options, onSelect, onSearch, setSearchQuery]
+    [isOpen, options, onSelect, onSearch, setSearchQuery],
   );
 
   const handleBlur = () => {
@@ -103,7 +103,7 @@ export const AutoComplete = ({
         inputRef?.current?.blur();
       }, 0);
     },
-    [onSelect, setSearchInput, setSearchQuery]
+    [onSelect, setSearchInput, setSearchQuery],
   );
 
   const handleClear = useCallback(() => {
@@ -144,7 +144,7 @@ export const AutoComplete = ({
         <div
           className={cn(
             "animate-in fade-in-0 zoom-in-95 absolute top-1 z-10 w-full rounded-xl outline-none bg-neutral-100 dark:bg-neutral-600",
-            isOpen ? "block" : "hidden"
+            isOpen ? "block" : "hidden",
           )}
         >
           <CommandList className="rounded-lg">

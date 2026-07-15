@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: "Error fetching filters" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -27,14 +27,14 @@ export async function GET(req: NextRequest) {
         .from("switches")
         .select()
         .or(
-          `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
+          `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`,
         )
         .limit(5);
 
       if (error) {
         return NextResponse.json(
           { error: "Error fetching search suggestions" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -45,14 +45,14 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       { error: "Invalid request type" },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     console.error("Switches API error:", error);
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

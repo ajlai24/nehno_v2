@@ -12,7 +12,7 @@ export const getSearchSuggestions = async (searchInput: string) => {
   let query = supabase.from("switches").select();
   query = query
     .or(
-      `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`
+      `name.ilike.%${searchInput}%,brand.ilike.%${searchInput}%,series.ilike.%${searchInput}%`,
     )
     .limit(5);
 

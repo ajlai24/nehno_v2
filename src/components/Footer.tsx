@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
 export function Footer() {
   const selectedLayoutSegment = useSelectedLayoutSegment();
   const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : "/";
-  
+
   // Hide footer on chat page
   if (pathname === "/chat") {
     return null;
@@ -31,10 +31,7 @@ export function Footer() {
             </Link>
           </Button>
           <Button variant="ghost" size="icon">
-            <Link
-              href="https://www.linkedin.com/in/devajlai/"
-              target="_blank"
-            >
+            <Link href="https://www.linkedin.com/in/devajlai/" target="_blank">
               <Icons.linkedin className="h-6 w-6" />
             </Link>
           </Button>
@@ -43,4 +40,3 @@ export function Footer() {
     </footer>
   );
 }
-

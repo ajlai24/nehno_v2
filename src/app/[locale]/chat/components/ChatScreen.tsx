@@ -37,7 +37,7 @@ export function ChatScreen() {
   const isLoading = status === "streaming" || status === "submitted";
 
   async function submitMessage(
-    e?: React.FormEvent<HTMLFormElement> | React.KeyboardEvent
+    e?: React.FormEvent<HTMLFormElement> | React.KeyboardEvent,
   ) {
     e?.preventDefault();
     if (!messages.length) {
@@ -119,7 +119,7 @@ export function ChatScreen() {
             "container min-[1800px]:max-w-[1536px] w-full text-white p-3 md:p-4",
             {
               "bottom-0 left-1/2 transform -translate-x-1/2 fixed": hasMessages,
-            }
+            },
           )}
         >
           <form

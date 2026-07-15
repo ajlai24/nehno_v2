@@ -1,23 +1,21 @@
 "use client";
 
 import CenteredLoader from "@/components/CenteredLoader";
-import { SwitchCard } from "./SwitchCard";
 import { Tables } from "@/utils/supabase/supabase.types";
+import { SwitchCard } from "./SwitchCard";
 
-type SwitchCollectionContentProps = {
+interface SwitchCollectionContentProps {
   isLoading: boolean;
   isError: boolean;
   switches: Tables<"switches">[];
-  setSelectedSwitch: (switchDetails: Tables<"switches">) => void;
-  setOpen: (isOpen: boolean) => void;
-};
+  onSelectSwitch: (switchDetails: Tables<"switches">) => void;
+}
 
 export function SwitchCollectionContent({
   isLoading,
   isError,
   switches,
-  setSelectedSwitch,
-  setOpen,
+  onSelectSwitch,
 }: SwitchCollectionContentProps) {
   if (isError) {
     return <div>Failed to load switches</div>;
@@ -39,10 +37,7 @@ export function SwitchCollectionContent({
     <div key={switchDetails.id}>
       <SwitchCard
         details={switchDetails}
-        onClick={() => {
-          setSelectedSwitch(switchDetails);
-          setOpen(true);
-        }}
+        onClick={() => onSelectSwitch(switchDetails)}
       />
     </div>
   ));

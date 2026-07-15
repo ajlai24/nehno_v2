@@ -22,12 +22,17 @@ export function SwitchDetailsTable({ details }: SwitchDetailsTableProps) {
 
   const rowData = [
     {
-      key: "Operation Force",
-      value: `${force} ± ${force_plus_minus} gf`,
+      key: "Actuation Force",
+      value: force_plus_minus
+        ? `${force} ± ${force_plus_minus} gf`
+        : `${force} gf`,
     },
     {
       key: "Pre-Travel",
-      value: `${pre_travel} ± ${pre_travel_plus_minus} mm`,
+      value:
+        pre_travel_plus_minus != null
+          ? `${pre_travel} ± ${pre_travel_plus_minus} mm`
+          : `${pre_travel} mm`,
     },
     {
       key: "Total Travel",

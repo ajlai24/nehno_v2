@@ -9,15 +9,16 @@ export async function GET(req: NextRequest) {
     const pageParam = Number(searchParams.get("page") ?? 0);
     const queryType = searchParams.get("queryType") ?? "all";
     const searchQuery = searchParams.get("searchQuery") ?? "";
-    const forceMin = Number(searchParams.get("forceMin") ?? 0);
-    const forceMax = Number(searchParams.get("forceMax") ?? 100);
-    const selectedSortValue =
-      searchParams.get("sort") ?? "name_asc";
+
+    const rangeFilters = JSON.parse(searchParams.get("rangeFilters") ?? "{}");
+    const forceFilter = rangeFilters.force;
+    const forceMin = forceFilter?.min ?? 0;
+    const forceMax = forceFilter?.max ?? 100;
+
+    const selectedSortValue = searchParams.get("sort") ?? "name_asc";
 
     // selectedFilters is JSON encoded
-    const selectedFilters = JSON.parse(
-      searchParams.get("filters") ?? "{}"
-    );
+    const selectedFilters = JSON.parse(searchParams.get("filters") ?? "{}");
 
     const supabase = supabaseAdmin;
 
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
     if (countError) {
       return NextResponse.json(
         { error: "Error fetching total count" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -88,11 +89,13 @@ export async function GET(req: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: "Error fetching search results" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
-      const totalPages = totalCount ? Math.ceil(totalCount / ITEMS_PER_PAGE) : 0;
+      const totalPages = totalCount
+        ? Math.ceil(totalCount / ITEMS_PER_PAGE)
+        : 0;
 
       return NextResponse.json({ switches, totalPages, totalCount });
     }
@@ -111,7 +114,7 @@ export async function GET(req: NextRequest) {
       if (selectedFilters) {
         for (const group in selectedFilters) {
           const activeFilters = Object.keys(selectedFilters[group]).filter(
-            (filter) => selectedFilters[group][filter]
+            (filter) => selectedFilters[group][filter],
           );
 
           if (activeFilters.length > 0) {
@@ -126,7 +129,7 @@ export async function GET(req: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: "Error fetching switches" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -136,7 +139,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in switches API route:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

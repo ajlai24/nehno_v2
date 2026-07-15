@@ -10,8 +10,7 @@ import { Tables } from "@/utils/supabase/supabase.types";
 import { SwitchDetailsTable } from "./SwitchDetailsTable";
 import { SwitchImage } from "./SwitchImage";
 
-interface SwitchDetailsContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface SwitchDetailsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   details?: Tables<"switches">;
 }

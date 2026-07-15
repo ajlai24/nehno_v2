@@ -20,7 +20,7 @@ export function Navigation() {
 
   const activeTab =
     tabs.find((tab) =>
-      tab.route === "/" ? pathname === "/" : pathname.startsWith(tab.route)
+      tab.route === "/" ? pathname === "/" : pathname.startsWith(tab.route),
     ) || tabs[0];
 
   return (
@@ -32,7 +32,12 @@ export function Navigation() {
         <Tabs className="mr-4" value={activeTab.label}>
           <TabsList className="md:h-12 md:gap-2">
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.route} value={tab.label} asChild className="md:text-base md:py-2">
+              <TabsTrigger
+                key={tab.route}
+                value={tab.label}
+                asChild
+                className="md:text-base md:py-2"
+              >
                 <NavigationLink href={tab.route}>{tab.label}</NavigationLink>
               </TabsTrigger>
             ))}
