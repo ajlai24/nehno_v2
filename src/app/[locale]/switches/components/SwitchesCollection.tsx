@@ -16,6 +16,7 @@ import { Tables } from "@/utils/supabase/supabase.types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { FilterValues } from "./Filters/filter-utils";
 import { FilterPanel } from "./Filters/FilterPanel";
 import { SwitchCollectionContent } from "./SwitchCollectionContent";
 import { SwitchDetailsContent } from "./SwitchDialogContent";
@@ -24,7 +25,7 @@ import { SwitchSort } from "./SwitchSort";
 export default function SwitchesCollection({
   filters,
 }: {
-  filters: Record<string, string[]>;
+  filters: Record<string, FilterValues>;
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -37,7 +38,7 @@ export default function SwitchesCollection({
     setSearchQuery,
     resetFilters,
     selectedFilters,
-    rangeFilters,
+    appliedRangeFilters,
     selectedSortValue,
   } = useFiltersStore();
 
@@ -45,13 +46,11 @@ export default function SwitchesCollection({
     if (searchQuery) return "search";
 
     const hasSelectedFilters = Object.keys(selectedFilters).some((group) =>
-      Object.values(selectedFilters[group]).some(Boolean)
+      Object.values(selectedFilters[group]).some(Boolean),
     );
 
-    const hasRangeFilters = Object.values(rangeFilters).some(
-      (filter) =>
-        filter.min !== 0 ||
-        filter.max !== 100
+    const hasRangeFilters = Object.values(appliedRangeFilters).some(
+      (filter) => filter.min !== 0 || filter.max !== 100,
     );
 
     if (hasSelectedFilters || hasRangeFilters) {
@@ -59,7 +58,7 @@ export default function SwitchesCollection({
     }
 
     return "all";
-  }, [rangeFilters, searchQuery, selectedFilters]);
+  }, [appliedRangeFilters, searchQuery, selectedFilters]);
 
   const { searchSuggestions, loadingSuggestions, handleQueryChange } =
     useSwitches();
@@ -75,7 +74,7 @@ export default function SwitchesCollection({
     queryKey: [
       "switches",
       queryType,
-      rangeFilters,
+      appliedRangeFilters,
       selectedFilters,
       searchQuery,
       selectedSortValue,
@@ -85,7 +84,7 @@ export default function SwitchesCollection({
         page: pageParam.toString(),
         queryType,
         searchQuery,
-        rangeFilters: JSON.stringify(rangeFilters),
+        rangeFilters: JSON.stringify(appliedRangeFilters),
         sort: selectedSortValue,
         filters: JSON.stringify(selectedFilters),
       });
@@ -107,8 +106,6 @@ export default function SwitchesCollection({
       return lastPageParam === 0 ? undefined : lastPageParam - 1;
     },
   });
-
-  console.log(data)
 
   const { ref: loadMoreRef } = useInView({
     triggerOnce: false,

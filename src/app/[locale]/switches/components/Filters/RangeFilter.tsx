@@ -11,15 +11,15 @@ import { useFiltersStore } from "@/stores/useFilterStore";
 import { parseNumeric } from "@/utils/parse-util";
 import debounce from "lodash.debounce";
 import { Info } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface RangeFilterProps {
   name: string;
   label: string;
-  min: number;          // slider lower bound
-  max: number;          // slider upper bound
-  defaultMin: number;   // selected starting value
-  defaultMax: number;   // selected starting value
+  min: number;
+  max: number;
+  defaultMin: number;
+  defaultMax: number;
   step?: number;
   tooltip?: string;
 }
@@ -37,17 +37,40 @@ export function RangeFilter({
   const {
     rangeFilters,
     setRangeFilter,
+    applyRangeFilters,
     setSearchInput,
     setSearchQuery,
   } = useFiltersStore();
 
-  const filter = rangeFilters[name];
+  const debouncedRangeFilterApply = useMemo(
+    () =>
+      debounce(() => {
+        applyRangeFilters();
+      }, 500),
+    [applyRangeFilters]
+  );
+
+  useEffect(() => {
+    return () => debouncedRangeFilterApply.cancel();
+  }, [debouncedRangeFilterApply]);
+
+  const filter = rangeFilters[name] ?? {
+    min: defaultMin,
+    max: defaultMax,
+    inputMin: defaultMin.toString(),
+    inputMax: defaultMax.toString(),
+  };
+
+  const [sliderValue, setSliderValue] = useState(() => [
+    filter.min,
+    filter.max,
+  ]);
 
   const setMin = useCallback(
     (value: number) => {
       setRangeFilter(name, {
         min: value,
-        inputMin: value.toString(),
+        inputMin: String(value),
       });
     },
     [name, setRangeFilter]
@@ -57,7 +80,7 @@ export function RangeFilter({
     (value: number) => {
       setRangeFilter(name, {
         max: value,
-        inputMax: value.toString(),
+        inputMax: String(value),
       });
     },
     [name, setRangeFilter]
@@ -70,13 +93,21 @@ export function RangeFilter({
     setSearchInput("");
     setSearchQuery("");
 
-    debouncedSetMin(values[0]);
-    debouncedSetMax(values[1]);
+    // Move slider immediately
+    setSliderValue(values);
 
+    // Update displayed inputs immediately
     setRangeFilter(name, {
+      min: values[0],
+      max: values[1],
       inputMin: values[0].toString(),
       inputMax: values[1].toString(),
     });
+
+    // Update query state after debounce
+    debouncedSetMin(values[0]);
+    debouncedSetMax(values[1]);
+    debouncedRangeFilterApply();
   };
 
   const handleMinChange = (
@@ -91,7 +122,7 @@ export function RangeFilter({
     const numericValue = parseNumeric(value);
 
     debouncedSetMin(
-      numericValue <= filter.max ? numericValue : filter.max
+      Math.min(numericValue, filter.max)
     );
   };
 
@@ -107,7 +138,7 @@ export function RangeFilter({
     const numericValue = parseNumeric(value);
 
     debouncedSetMax(
-      numericValue >= filter.min ? numericValue : filter.min
+      Math.max(numericValue, filter.min)
     );
   };
 
@@ -126,9 +157,9 @@ export function RangeFilter({
     );
 
     if (type === "min") {
-      setMin(value <= filter.max ? value : filter.max);
+      setMin(Math.min(value, filter.max));
     } else {
-      setMax(value >= filter.min ? value : filter.min);
+      setMax(Math.max(value, filter.min));
     }
   };
 
@@ -152,10 +183,7 @@ export function RangeFilter({
 
       <div className="pr-2">
         <SliderRange
-          value={[
-            filter.min,
-            filter.max,
-          ]}
+          value={sliderValue}
           defaultValue={[
             defaultMin,
             defaultMax,

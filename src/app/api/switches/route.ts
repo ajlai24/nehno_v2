@@ -9,8 +9,14 @@ export async function GET(req: NextRequest) {
     const pageParam = Number(searchParams.get("page") ?? 0);
     const queryType = searchParams.get("queryType") ?? "all";
     const searchQuery = searchParams.get("searchQuery") ?? "";
-    const forceMin = Number(searchParams.get("forceMin") ?? 0);
-    const forceMax = Number(searchParams.get("forceMax") ?? 100);
+
+    const rangeFilters = JSON.parse(
+      searchParams.get("rangeFilters") ?? "{}"
+    );
+    const forceFilter = rangeFilters.force;
+    const forceMin = forceFilter?.min ?? 0;
+    const forceMax = forceFilter?.max ?? 100;
+
     const selectedSortValue =
       searchParams.get("sort") ?? "name_asc";
 
