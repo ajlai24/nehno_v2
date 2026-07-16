@@ -11,7 +11,7 @@ import { useFiltersStore } from "@/stores/useFilterStore";
 import { parseNumeric } from "@/utils/parse-util";
 import debounce from "lodash.debounce";
 import { Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 interface RangeFilterProps {
   name: string;
@@ -54,49 +54,21 @@ export function RangeFilter({
     return () => debouncedRangeFilterApply.cancel();
   }, [debouncedRangeFilterApply]);
 
-  const filter = rangeFilters[name] ?? {
-    min: defaultMin,
-    max: defaultMax,
-    inputMin: defaultMin.toString(),
-    inputMax: defaultMax.toString(),
+  const stored = rangeFilters[name];
+  const filter = {
+    min: stored?.min ?? defaultMin,
+    max: stored?.max ?? defaultMax,
+    inputMin: stored?.inputMin ?? String(defaultMin),
+    inputMax: stored?.inputMax ?? String(defaultMax),
   };
 
-  const [sliderValue, setSliderValue] = useState(() => [
-    filter.min,
-    filter.max,
-  ]);
-
-  const setMin = useCallback(
-    (value: number) => {
-      setRangeFilter(name, {
-        min: value,
-        inputMin: String(value),
-      });
-    },
-    [name, setRangeFilter],
-  );
-
-  const setMax = useCallback(
-    (value: number) => {
-      setRangeFilter(name, {
-        max: value,
-        inputMax: String(value),
-      });
-    },
-    [name, setRangeFilter],
-  );
-
-  const debouncedSetMin = useDebouncedSetter(setMin);
-  const debouncedSetMax = useDebouncedSetter(setMax);
+  const sliderValue = [filter.min, filter.max];
 
   const handleSliderChange = (values: number[]) => {
     setSearchInput("");
     setSearchQuery("");
 
-    // Move slider immediately
-    setSliderValue(values);
-
-    // Update displayed inputs immediately
+    // Update UI immediately
     setRangeFilter(name, {
       min: values[0],
       max: values[1],
@@ -104,11 +76,40 @@ export function RangeFilter({
       inputMax: values[1].toString(),
     });
 
-    // Update query state after debounce
-    debouncedSetMin(values[0]);
-    debouncedSetMax(values[1]);
+    // Apply to query after debounce
     debouncedRangeFilterApply();
   };
+
+  const setMin = useCallback(
+    (value: number) => {
+      if (!Number.isFinite(value)) return;
+
+      setRangeFilter(name, {
+        min: value,
+        inputMin: String(value),
+      });
+
+      debouncedRangeFilterApply();
+    },
+    [name, setRangeFilter, debouncedRangeFilterApply],
+  );
+
+  const setMax = useCallback(
+    (value: number) => {
+      if (!Number.isFinite(value)) return;
+
+      setRangeFilter(name, {
+        max: value,
+        inputMax: String(value),
+      });
+
+      debouncedRangeFilterApply();
+    },
+    [name, setRangeFilter, debouncedRangeFilterApply],
+  );
+
+  const debouncedSetMin = useDebouncedSetter(setMin);
+  const debouncedSetMax = useDebouncedSetter(setMax);
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -118,8 +119,9 @@ export function RangeFilter({
     });
 
     const numericValue = parseNumeric(value);
-
-    debouncedSetMin(Math.min(numericValue, filter.max));
+    if (value !== "" && Number.isFinite(numericValue)) {
+      debouncedSetMin(Math.min(numericValue, filter.max));
+    }
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +132,9 @@ export function RangeFilter({
     });
 
     const numericValue = parseNumeric(value);
-
-    debouncedSetMax(Math.max(numericValue, filter.min));
+    if (value !== "" && Number.isFinite(numericValue)) {
+      debouncedSetMax(Math.max(numericValue, filter.min));
+    }
   };
 
   const handleKeyPress = (
@@ -174,7 +177,6 @@ export function RangeFilter({
       <div className="pr-2">
         <SliderRange
           value={sliderValue}
-          defaultValue={[defaultMin, defaultMax]}
           minStepsBetweenThumbs={1}
           min={min}
           max={max}
@@ -189,7 +191,7 @@ export function RangeFilter({
           <label className="text-neutral-500">Min</label>
 
           <Input
-            value={filter.inputMin}
+            value={filter.inputMin ?? ""}
             onChange={handleMinChange}
             onKeyDown={(e) => handleKeyPress(e, "min")}
           />
@@ -199,7 +201,7 @@ export function RangeFilter({
           <label className="text-xs text-neutral-500">Max</label>
 
           <Input
-            value={filter.inputMax}
+            value={filter.inputMax ?? ""}
             onChange={handleMaxChange}
             onKeyDown={(e) => handleKeyPress(e, "max")}
           />
