@@ -11,7 +11,7 @@ import { useFiltersStore } from "@/stores/useFilterStore";
 import { parseNumeric } from "@/utils/parse-util";
 import debounce from "lodash.debounce";
 import { Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 interface RangeFilterProps {
   name: string;
@@ -61,10 +61,7 @@ export function RangeFilter({
     inputMax: defaultMax.toString(),
   };
 
-  const [sliderValue, setSliderValue] = useState(() => [
-    filter.min,
-    filter.max,
-  ]);
+  const sliderValue = [filter.min, filter.max];
 
   const setMin = useCallback(
     (value: number) => {
@@ -92,9 +89,6 @@ export function RangeFilter({
   const handleSliderChange = (values: number[]) => {
     setSearchInput("");
     setSearchQuery("");
-
-    // Move slider immediately
-    setSliderValue(values);
 
     // Update displayed inputs immediately
     setRangeFilter(name, {
@@ -174,7 +168,6 @@ export function RangeFilter({
       <div className="pr-2">
         <SliderRange
           value={sliderValue}
-          defaultValue={[defaultMin, defaultMax]}
           minStepsBetweenThumbs={1}
           min={min}
           max={max}

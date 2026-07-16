@@ -21,6 +21,7 @@ interface FilterStore {
   selectedFilters: SelectedFilters;
   toggleFilter: (group: string, filter: string) => void;
 
+  defaultRangeFilters: Record<string, RangeFilter>;
   rangeFilters: Record<string, RangeFilter>;
 
   initializeRangeFilters: (filters: FilterRangeConfig) => void;
@@ -71,12 +72,18 @@ export const useFiltersStore = create<FilterStore>((set) => ({
       },
     })),
 
+  defaultRangeFilters: {},
   rangeFilters: {},
 
-  initializeRangeFilters: (filters) =>
+  initializeRangeFilters: (filters) => {
+    const ranges = emptyRangeFilters(filters);
+
     set({
-      rangeFilters: emptyRangeFilters(filters),
-    }),
+      defaultRangeFilters: ranges,
+      rangeFilters: ranges,
+      appliedRangeFilters: ranges,
+    });
+  },
 
   setRangeFilter: (name, values) =>
     set((state) => ({
@@ -98,17 +105,8 @@ export const useFiltersStore = create<FilterStore>((set) => ({
   resetFilters: () =>
     set((state) => ({
       selectedFilters: {},
-
-      rangeFilters: Object.fromEntries(
-        Object.entries(state.rangeFilters).map(([key, value]) => [
-          key,
-          {
-            ...value,
-            inputMin: String(value.min),
-            inputMax: String(value.max),
-          },
-        ]),
-      ),
+      rangeFilters: structuredClone(state.defaultRangeFilters),
+      appliedRangeFilters: structuredClone(state.defaultRangeFilters),
     })),
 
   searchInput: "",
